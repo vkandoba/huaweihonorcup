@@ -37,7 +37,7 @@ namespace Borderer
             return result;
         }
 
-        private SquareAndF GetSquare(Bitmap image, ISquare first, ISquare[] slices)
+        public SquareAndF GetSquare(Bitmap image, ISquare first, ISquare[] slices)
         {
             Square best = null;
             double bestF = double.MaxValue;
@@ -57,7 +57,7 @@ namespace Borderer
                     var fours = slices
                         .Where(x => !first.HasCross(x) && !second.HasCross(x) && !thrid.HasCross(x))
                         .ToArray();
-                    foreach (var four in fours.Take(n))
+                    foreach (var four in fours)
                     {
                         var square = new Square(first, second, thrid, four);
                         var f = square.Estimate(image, estimator);
