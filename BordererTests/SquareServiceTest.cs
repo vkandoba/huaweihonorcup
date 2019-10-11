@@ -20,12 +20,12 @@ namespace BordererTests
             service = new SquareService(estimator, 10);
             var slices = Slice.GenerateBaseSlices(64);
             var square = Square.MakeSquare(slices);
-            foreach (var imagefile in Directory.GetFiles(imageset).Take(3))
+            foreach (var imagefile in Directory.GetFiles(imageset).Skip(3).Take(1))
             {
 
-                var imageName = Path.GetFileName(imagefile);
+                var imageName = Path.GetFileNameWithoutExtension(imagefile);
                 var image = new Bitmap(imagefile);
-                var sourcefile = Path.Combine(imagesource, imageName);
+                var sourcefile = Path.Combine(imagesource, imageName + ".png");
                 var source = new Bitmap(sourcefile);
 
                 var sw = new Stopwatch();
@@ -43,8 +43,10 @@ namespace BordererTests
                     var N = (pair.Key as Slice).N;
                     Console.WriteLine($"{N} {pair.Value.F}");
                     var bitmap = pair.Value.Square.Draw(image);
-                    bitmap.Save($"C:\\huaway\\tests\\drawimage-{N}-{imageName}");
+                    bitmap.Save($"C:\\huaway\\tests\\drawimage-{imageName}-{N}.png");
                 }
+                var bitmap2 = square.Draw(source);
+                bitmap2.Save($"C:\\huaway\\tests\\source-{imageName}.png");
                 Console.WriteLine($"done\n");
             }
         }
