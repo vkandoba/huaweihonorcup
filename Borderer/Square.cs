@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Net;
 
 namespace Borderer
@@ -9,6 +10,7 @@ namespace Borderer
         private ISquare second;
         private ISquare thrid;
         private ISquare four;
+        private ISquare[] parts;
         private int baseSize;
 
         public Square(ISquare[] parts)
@@ -17,6 +19,18 @@ namespace Borderer
             second = parts[1];
             thrid = parts[2];
             four = parts[3];
+            this.parts = parts;
+            baseSize = first.Size;
+            Size = baseSize * 2;
+        }
+
+        public Square(ISquare first, ISquare second, ISquare thrid, ISquare four)
+        {
+            this.first = first;
+            this.second = second;
+            this.thrid = thrid;
+            this.four = four;
+            parts = new[] {first, second, thrid, four};
             baseSize = first.Size;
             Size = baseSize * 2;
         }
@@ -67,6 +81,45 @@ namespace Borderer
                                     four.DeepEstimate(image, estimator)) / 4.0;
             var ownEstimate = Estimate(image, estimator);
             return (internalEstimate + ownEstimate) / 2.0;
+        }
+
+        public bool HasCross(ISquare other)
+        {
+            var square = other as Square;
+            if (square == null || square.Size != this.Size)
+                throw new ArgumentException("slice iscross has invalid argument", nameof(other));
+
+            foreach (var myPart in parts)
+                foreach (var otherPart in square.parts)
+                    if (Equals(myPart, otherPart) || myPart.HasCross(otherPart))
+                        return true;
+
+            return false;
+        }
+
+        protected bool Equals(Square other)
+        {
+            return Equals(first, other.first) && Equals(second, other.second) && Equals(thrid, other.thrid) && Equals(four, other.four);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Square) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = (first != null ? first.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (second != null ? second.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (thrid != null ? thrid.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (four != null ? four.GetHashCode() : 0);
+                return hashCode;
+            }
         }
 
         public static Square MakeSquare(Slice[,] slices)

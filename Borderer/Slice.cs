@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace Borderer
 {
@@ -30,6 +31,14 @@ namespace Borderer
 
         public double Estimate(Bitmap image, IEstimator estimator) => 0;
         public double DeepEstimate(Bitmap image, IEstimator estimator) => 0;
+        public bool HasCross(ISquare other)
+        {
+            var slice = other as Slice;
+            if (slice == null || slice.parameters.P != parameters.P)
+                throw new ArgumentException("slice iscross has invalid argument", nameof(other));
+
+            return slice.N == N;
+        }
 
         public static Slice[,] GenerateBaseSlices(int p)
         {

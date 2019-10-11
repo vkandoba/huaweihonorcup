@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace Borderer
@@ -11,8 +12,14 @@ namespace Borderer
 
     public class Estimator : IEstimator
     {
+        private IDictionary<ValueTuple<ISquare, ISquare>, double> cacheH = new Dictionary<ValueTuple<ISquare, ISquare>, double>();
+        private IDictionary<ValueTuple<ISquare, ISquare>, double> cacheV = new Dictionary<ValueTuple<ISquare, ISquare>, double>();
+
         public double MeasureH(Bitmap image, ISquare left, ISquare right)
         {
+            if (cacheH.TryGetValue((left, right), out double f))
+                return f;
+
             var total = 0.0;
             for (int i = 0; i < left.Size; i++)
             {
@@ -22,11 +29,17 @@ namespace Borderer
                 var rightp = image.GetPixel(rxy.Item1, rxy.Item2);
                 total += Compare(leftp, rightp);
             }
-            return total / left.Size;
+
+            var measure = total / left.Size;
+            cacheH.Add((left, right), measure);
+            return measure;
         }
 
         public double MeasureV(Bitmap image, ISquare top, ISquare bottom)
         {
+            if (cacheH.TryGetValue((top, bottom), out double f))
+                return f;
+
             var total = 0.0;
             for (int i = 0; i < bottom.Size; i++)
             {
@@ -36,7 +49,10 @@ namespace Borderer
                 var topp = image.GetPixel(txy.Item1, txy.Item2);
                 total += Compare(bottomp, topp);
             }
-            return total / bottom.Size;
+
+            var measure = total / top.Size;
+            cacheH.Add((top, bottom), measure);
+            return measure;
         }
 
         private int Compare(Color p1, Color p2)
