@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -16,7 +17,7 @@ namespace BordererTests
         public void TestGetSquares()
         {
             var estimator = new Estimator();
-            service = new SquareService(estimator, 4);
+            service = new SquareService(estimator, 10);
             var slices = Slice.GenerateBaseSlices(64);
             var square = Square.MakeSquare(slices);
             foreach (var imagefile in Directory.GetFiles(imageset).Take(3))
@@ -39,9 +40,10 @@ namespace BordererTests
 
                 foreach (var pair in squares.OrderBy(x => x.Value.F))
                 {
-                    Console.WriteLine($"{(pair.Key as Slice).N} {pair.Value.F}");
-                    //var bitmap = squares[slice].Draw(image);
-                    //bitmap.Save($"C:\\huaway\\tests\\drawimage-{slice.N}-{imageName}");
+                    var N = (pair.Key as Slice).N;
+                    Console.WriteLine($"{N} {pair.Value.F}");
+                    var bitmap = pair.Value.Square.Draw(image);
+                    bitmap.Save($"C:\\huaway\\tests\\drawimage-{N}-{imageName}");
                 }
                 Console.WriteLine($"done\n");
             }
@@ -51,7 +53,7 @@ namespace BordererTests
         public void TestRecursivePrototype()
         {
             var estimator = new Estimator();
-            service = new SquareService(estimator, 64);
+            service = new SquareService(estimator, 20);
             var slices = Slice.GenerateBaseSlices(64);
             var square = Square.MakeSquare(slices);
             foreach (var imagefile in Directory.GetFiles(imageset).Take(1))
@@ -83,6 +85,45 @@ namespace BordererTests
 
                 var answer = squares.First();
                 var bitmap = answer.Square.Draw(image);
+                bitmap.Save($"C:\\huaway\\tests\\answr-{imageName}");
+                Console.WriteLine($"image: {imageName}\n time: {sw.Elapsed}\n");
+            }
+        }
+        [Test]
+        public void TestPrototype1()
+        {
+            var estimator = new Estimator();
+            service = new SquareService(estimator, 10);
+            var slices = Slice.GenerateBaseSlices(64);
+            var square = Square.MakeSquare(slices);
+            foreach (var imagefile in Directory.GetFiles(imageset).Take(1))
+            {
+
+                var imageName = Path.GetFileName(imagefile);
+                var image = new Bitmap(imagefile);
+                var sourcefile = Path.Combine(imagesource, imageName);
+                var source = new Bitmap(sourcefile);
+
+                var sw = new Stopwatch();
+
+                sw.Start();
+
+                var rest = slices.Cast<Slice>().ToList();
+                var first = rest.First();
+                rest.Remove(first);
+                var squares1 = service.GetSquare(image, first, rest.ToArray()).Square as Square;
+
+                IList<Square> next = new List<Square>();
+                for (int i = 0; i < squares1.Parts.Length; i++)
+                {
+                    var item = service.GetSquare(image, squares1.Parts[i], rest.ToArray()).Square as Square;
+                    next.Add(item);
+                    foreach (var itemPart in item.Parts)
+                        rest.Remove(itemPart as Slice);
+                }
+                var squares2 = new Square(next.ToArray());
+
+                var bitmap = squares2.Draw(image);
                 bitmap.Save($"C:\\huaway\\tests\\answr-{imageName}");
                 Console.WriteLine($"image: {imageName}\n time: {sw.Elapsed}\n");
             }
