@@ -6,31 +6,36 @@ namespace Borderer
 {
     public class Square : ISquare
     {
-        private ISquare first;
-        private ISquare second;
-        private ISquare thrid;
-        private ISquare four;
-        private ISquare[] parts;
-        private int baseSize;
+        public ISquare First { get; }
+
+        public ISquare Second { get; }
+
+        public ISquare Thrid { get; }
+
+        public ISquare Four { get; }
+
+        public ISquare[] Parts { get; set; }
+
+        private readonly int baseSize;
 
         public Square(ISquare[] parts)
         {
-            first = parts[0];
-            second = parts[1];
-            thrid = parts[2];
-            four = parts[3];
-            this.parts = parts;
-            baseSize = first.Size;
+            First = parts[0];
+            Second = parts[1];
+            Thrid = parts[2];
+            Four = parts[3];
+            this.Parts = parts;
+            baseSize = First.Size;
             Size = baseSize * 2;
         }
 
         public Square(ISquare first, ISquare second, ISquare thrid, ISquare four)
         {
-            this.first = first;
-            this.second = second;
-            this.thrid = thrid;
-            this.four = four;
-            parts = new[] {first, second, thrid, four};
+            this.First = first;
+            this.Second = second;
+            this.Thrid = thrid;
+            this.Four = four;
+            Parts = new[] {first, second, thrid, four};
             baseSize = first.Size;
             Size = baseSize * 2;
         }
@@ -41,16 +46,16 @@ namespace Borderer
             if (x < baseSize)
             {
                 if (y < baseSize)
-                    return first.ToAbsolute(x, y);
+                    return First.ToAbsolute(x, y);
                 else
-                    return thrid.ToAbsolute(x, y - baseSize);
+                    return Thrid.ToAbsolute(x, y - baseSize);
             }
             else
             {
                 if (y < baseSize)
-                    return second.ToAbsolute(x - baseSize, y);
+                    return Second.ToAbsolute(x - baseSize, y);
                 else
-                    return four.ToAbsolute(x - baseSize, y - baseSize);
+                    return Four.ToAbsolute(x - baseSize, y - baseSize);
             }
         }
 
@@ -59,26 +64,26 @@ namespace Borderer
             var bitmap = new Bitmap(Size, Size);
             using (var g = Graphics.FromImage(bitmap))
             {
-                g.DrawImage(first.Draw(original), 0 , 0);
-                g.DrawImage(second.Draw(original), baseSize, 0);
-                g.DrawImage(thrid.Draw(original), 0, baseSize);
-                g.DrawImage(four.Draw(original), baseSize, baseSize);
+                g.DrawImage(First.Draw(original), 0 , 0);
+                g.DrawImage(Second.Draw(original), baseSize, 0);
+                g.DrawImage(Thrid.Draw(original), 0, baseSize);
+                g.DrawImage(Four.Draw(original), baseSize, baseSize);
             }
             return bitmap;
         }
 
         public double Estimate(Bitmap image, IEstimator estimator) =>
-            (estimator.MeasureH(image, first, second) +
-             estimator.MeasureV(image, first, thrid) +
-             estimator.MeasureH(image, thrid, four) +
-             estimator.MeasureV(image, second, four)) / 4.0;
+            (estimator.MeasureH(image, First, Second) +
+             estimator.MeasureV(image, First, Thrid) +
+             estimator.MeasureH(image, Thrid, Four) +
+             estimator.MeasureV(image, Second, Four)) / 4.0;
 
         public double DeepEstimate(Bitmap image, IEstimator estimator)
         {
-            var internalEstimate = (first.DeepEstimate(image, estimator) +
-                                    second.DeepEstimate(image, estimator) +
-                                    thrid.DeepEstimate(image, estimator) +
-                                    four.DeepEstimate(image, estimator)) / 4.0;
+            var internalEstimate = (First.DeepEstimate(image, estimator) +
+                                    Second.DeepEstimate(image, estimator) +
+                                    Thrid.DeepEstimate(image, estimator) +
+                                    Four.DeepEstimate(image, estimator)) / 4.0;
             var ownEstimate = Estimate(image, estimator);
             return (internalEstimate + ownEstimate) / 2.0;
         }
@@ -89,8 +94,8 @@ namespace Borderer
             if (square == null || square.Size != this.Size)
                 throw new ArgumentException("slice iscross has invalid argument", nameof(other));
 
-            foreach (var myPart in parts)
-                foreach (var otherPart in square.parts)
+            foreach (var myPart in Parts)
+                foreach (var otherPart in square.Parts)
                     if (Equals(myPart, otherPart) || myPart.HasCross(otherPart))
                         return true;
 
@@ -99,7 +104,7 @@ namespace Borderer
 
         protected bool Equals(Square other)
         {
-            return Equals(first, other.first) && Equals(second, other.second) && Equals(thrid, other.thrid) && Equals(four, other.four);
+            return Equals(First, other.First) && Equals(Second, other.Second) && Equals(Thrid, other.Thrid) && Equals(Four, other.Four);
         }
 
         public override bool Equals(object obj)
@@ -114,10 +119,10 @@ namespace Borderer
         {
             unchecked
             {
-                var hashCode = (first != null ? first.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (second != null ? second.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (thrid != null ? thrid.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (four != null ? four.GetHashCode() : 0);
+                var hashCode = (First != null ? First.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Second != null ? Second.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Thrid != null ? Thrid.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Four != null ? Four.GetHashCode() : 0);
                 return hashCode;
             }
         }
