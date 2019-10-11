@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ImageParameters.cs" />
+    <Compile Include="ImageTool.cs" />
     <Compile Include="ISquare.cs" />
     <Compile Include="Estimator.cs" />
     <Compile Include="Program.cs" />
