@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Borderer", "Borderer\Borderer.csproj", "{B77828C5-083E-44DA-AD5E-C285E9EF21C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BordererTests", "BordererTests\BordererTests.csproj", "{DFB72543-5110-45A6-B724-C6A16366EF77}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B77828C5-083E-44DA-AD5E-C285E9EF21C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B77828C5-083E-44DA-AD5E-C285E9EF21C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B77828C5-083E-44DA-AD5E-C285E9EF21C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B77828C5-083E-44DA-AD5E-C285E9EF21C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFB72543-5110-45A6-B724-C6A16366EF77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFB72543-5110-45A6-B724-C6A16366EF77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFB72543-5110-45A6-B724-C6A16366EF77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFB72543-5110-45A6-B724-C6A16366EF77}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {849D7AF7-487A-47EA-BE92-6A3AE1EF4CE0}
+	EndGlobalSection
+EndGlobal
