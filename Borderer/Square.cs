@@ -73,10 +73,10 @@ namespace Borderer
         }
 
         public double Estimate(Bitmap image, IEstimator estimator) =>
-            (estimator.MeasureH(image, First, Second) +
-             estimator.MeasureV(image, First, Thrid) +
-             estimator.MeasureH(image, Thrid, Four) +
-             estimator.MeasureV(image, Second, Four)) / 4.0;
+            (estimator.MeasureLeftRight(image, First, Second) +
+             estimator.MeasureTopBottom(image, First, Thrid) +
+             estimator.MeasureLeftRight(image, Thrid, Four) +
+             estimator.MeasureTopBottom(image, Second, Four)) / 4.0;
 
         public double DeepEstimate(Bitmap image, IEstimator estimator)
         {
@@ -102,6 +102,8 @@ namespace Borderer
             return false;
         }
 
+        public override string ToString() => $"{First} {Second} {Thrid} {Four}";
+
         protected bool Equals(Square other)
         {
             return Equals(First, other.First) && Equals(Second, other.Second) && Equals(Thrid, other.Thrid) && Equals(Four, other.Four);
@@ -125,36 +127,6 @@ namespace Borderer
                 hashCode = (hashCode * 397) ^ (Four != null ? Four.GetHashCode() : 0);
                 return hashCode;
             }
-        }
-
-        public static Square MakeSquare(Slice[,] slices)
-        {
-            var result = MakeSquareInternal(slices, slices.GetLength(0));
-            return result[0, 0] as Square;
-        }
-
-        private static ISquare[,] MakeSquareInternal(ISquare[,] squares, int size)
-        {
-            if (size == 1)
-                return squares;
-
-            var result = new ISquare[size / 2, size / 2];
-            for (int i = 0; i < size / 2; i++)
-            {
-                for (int j = 0; j < size / 2; j++)
-                {
-                    int x = 2 * i, y = 2 * j;
-                    result[i, j] = new Square(new []
-                    {
-                        squares[x, y],
-                        squares[x + 1, y],
-                        squares[x, y + 1],
-                        squares[x + 1, y + 1]
-                    });
-                }       
-            }
-
-            return MakeSquareInternal(result, size / 2);
         }
     }
 }

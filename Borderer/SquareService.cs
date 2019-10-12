@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Net.Http;
@@ -44,13 +45,14 @@ namespace Borderer
 
             var seconds = slices
                             .Where(x => !first.HasCross(x))
-                            .OrderBy(x => estimator.MeasureH(image, first, x))
+                            .OrderBy(x => estimator.MeasureLeftRight(image, first, x))
                             .ToArray();
+            var count = 0;
             foreach (var second in seconds.Take(n))
             {
                 var thrids = slices
                     .Where(x => !first.HasCross(x) && !second.HasCross(x))
-                    .OrderBy(x => estimator.MeasureV(image, first, x))
+                    .OrderBy(x => estimator.MeasureTopBottom(image, first, x))
                     .ToArray();
                 foreach (var thrid in thrids.Take(n))
                 {
@@ -59,8 +61,9 @@ namespace Borderer
                         .ToArray();
                     foreach (var four in fours)
                     {
+                        count++;
                         var square = new Square(first, second, thrid, four);
-                        var f = square.Estimate(image, estimator);
+                        var f = estimator.MeasureSquare(image, square);
                         if (f < bestF)
                         {
                             bestF = f;
@@ -69,8 +72,37 @@ namespace Borderer
                     }
                 }
             }
-
             return best == null ? null : new SquareAndF{Square = best, F = bestF};
+        }
+
+        public static Square MakeSquare(Slice[,] slices)
+        {
+            var result = MakeSquareInternal(slices, slices.GetLength(0));
+            return result[0, 0] as Square;
+        }
+
+        private static ISquare[,] MakeSquareInternal(ISquare[,] squares, int size)
+        {
+            if (size == 1)
+                return squares;
+
+            var result = new ISquare[size / 2, size / 2];
+            for (int i = 0; i < size / 2; i++)
+            {
+                for (int j = 0; j < size / 2; j++)
+                {
+                    int x = 2 * i, y = 2 * j;
+                    result[i, j] = new Square(new[]
+                    {
+                        squares[x, y],
+                        squares[x + 1, y],
+                        squares[x, y + 1],
+                        squares[x + 1, y + 1]
+                    });
+                }
+            }
+
+            return MakeSquareInternal(result, size / 2);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Borderer
             PositionY = positionY;
             ShiftX = PositionX * parameters.P;
             ShiftY = PositionY * parameters.P;
-            N = PositionX * parameters.M + PositionY;
+            N = PositionX + PositionY * parameters.M;
         }
 
         public int Size => parameters.P;
@@ -54,6 +54,8 @@ namespace Borderer
 
             return result;
         }
+
+        public override string ToString() => $"{N}";
 
         protected bool Equals(Slice other)
         {
