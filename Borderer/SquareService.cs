@@ -38,6 +38,27 @@ namespace Borderer
             return result;
         }
 
+        public ISquare RecursiveCollect(Bitmap image, ImageParameters param, Slice[,] slices)
+        {
+            SquareAndF[] squares = slices.Cast<Slice>().Select(slice => new SquareAndF
+            {
+                Square = slice,
+                F = slice.Estimate(image, null)
+            }).ToArray();
+            var size = param.P;
+            do
+            {
+                squares = GetSquares(image, squares.Select(x => x.Square).ToArray())
+                    .Values
+                    .OrderBy(x => x.F)
+                    .ToArray();
+                size = squares.Any() ? squares.First().Square.Size : ImageParameters.__totalSize;
+            } while (size < ImageParameters.__totalSize);
+
+            var answer = squares.Any() ? squares.First().Square : SquareService.MakeSquare(slices);
+            return answer;
+        }
+
         public SquareAndF GetSquare(Bitmap image, ISquare first, ISquare[] slices)
         {
             Square best = null;

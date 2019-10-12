@@ -55,17 +55,12 @@ namespace BordererTests
         [Test]
         public void TestRecursivePrototype()
         {
-            var estimator = new Estimator();
-            service = new SquareService(estimator, 20);
-            var slices = Slice.GenerateBaseSlices(64);
-            var square = SquareService.MakeSquare(slices);
             foreach (var imagefile in Directory.GetFiles(imageset).Take(1))
             {
-
+                var slices = Slice.GenerateBaseSlices(64);
+                service = new SquareService(new Estimator(), 20);
                 var imageName = Path.GetFileName(imagefile);
                 var image = new Bitmap(imagefile);
-                var sourcefile = Path.Combine(imagesource, imageName);
-                var source = new Bitmap(sourcefile);
 
                 var sw = new Stopwatch();
 
@@ -83,13 +78,16 @@ namespace BordererTests
                         .Values
                         .OrderBy(x => x.F)
                         .ToArray();
-                    size = squares.First().Square.Size;
+                    size = squares.Any() ? squares.First().Square.Size : ImageParameters.__totalSize;
                 } while (size < ImageParameters.__totalSize);
 
-                var answer = squares.First();
-                var bitmap = answer.Square.Draw(image);
+                var answer = squares.Any() ? squares.First().Square : SquareService.MakeSquare(slices);
+                var map = (answer as Square).Apply();
+                var bitmap = answer.Draw(image);
                 bitmap.Save($"C:\\huaway\\tests\\answr-{imageName}");
-                Console.WriteLine($"image: {imageName}\n time: {sw.Elapsed}\n");
+                var permutation = map.Cast<Slice>().Aggregate("", (s, n) => $"{s} {n}");
+                Console.WriteLine($"image: {imageName}\n time: {sw.Elapsed}\n" +
+                                  $"{permutation}");
             }
         }
         [Test]
