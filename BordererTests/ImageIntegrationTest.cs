@@ -49,7 +49,7 @@ namespace BordererTests
             foreach (var imagefile in Directory.GetFiles(imageset).Take(3))
             {
                 var slices = Slice.GenerateBaseSlices(64);
-                var square = Square.MakeSquare(slices);
+                var square = SquareService.MakeSquare(slices);
 
                 var imageName = Path.GetFileName(imagefile);
                 var image = new Bitmap(imagefile);
@@ -60,6 +60,41 @@ namespace BordererTests
                 var bitmap2 = square.Draw(source);
                 bitmap1.Save($"C:\\huaway\\tests\\drawimage-{imageName}");
                 bitmap2.Save($"C:\\huaway\\tests\\drawsource-{imageName}");
+            }
+        }
+
+        [Test]
+        public void TestRecoveImage()
+        {
+            var order = new int[]
+            {
+                32, 21, 22, 16, 14, 60, 29, 39,
+                33, 31, 54, 26, 10, 20, 1,  41,
+                56, 28, 12, 17, 25, 58, 59, 43,
+                45, 46, 44, 18, 0,  3, 62,  6,
+                38, 48, 13, 63, 27, 19, 50, 51,
+                23, 37, 40, 53, 42, 24, 61, 57,
+                52, 15, 5, 34, 36,  4, 35,  8,
+                49, 9,  2, 55, 7,  11, 47,  3
+            };
+            foreach (var imagefile in Directory.GetFiles(imageset).Take(1))
+            {
+                var slices = Slice.GenerateBaseSlices(64);
+
+                var imageName = Path.GetFileName(imagefile);
+                var image = new Bitmap(imagefile);
+
+                var array = slices.Cast<Slice>().OrderBy(s => s.N).ToArray();
+                for (int i = 0; i < order.Length; i++)
+                {
+                    var x = i % param.M;
+                    var y = i / param.M;
+                    slices[x, y] = array[order[i]];
+                }
+                var square = SquareService.MakeSquare(slices);
+
+                var bitmap1 = square.Draw(image);
+                bitmap1.Save($"C:\\huaway\\tests\\recoveimage-{imageName}");
             }
         }
     }
