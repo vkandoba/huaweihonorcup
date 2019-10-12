@@ -21,8 +21,12 @@ namespace Borderer
                 var image = new Bitmap(imagefile);
                 var answer = service.RecursiveCollect(image, param, slices);
                 var map = (answer as Square).Apply();
-                var permutation = map.Cast<Slice>().Aggregate("", (s, n) => $"{s} {n}");
                 Console.WriteLine(Path.GetFileName(imagefile));
+                var sp = new List<int>();
+                for (int i = 0; i < param.M; i++)
+                    for (int j = 0; j < param.M; j++)
+                        sp.Add(map[j, i].N);
+                var permutation = sp.Aggregate("", (s, n) => $"{s} {n}");
                 Console.WriteLine(permutation);
                 var bitmap = answer.Draw(image);
                 bitmap.Save($"C:\\huaway\\final\\answr-{Path.GetFileName(imagefile)}");

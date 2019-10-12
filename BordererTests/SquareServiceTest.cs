@@ -85,7 +85,11 @@ namespace BordererTests
                 var map = (answer as Square).Apply();
                 var bitmap = answer.Draw(image);
                 bitmap.Save($"C:\\huaway\\tests\\answr-{imageName}");
-                var permutation = map.Cast<Slice>().Aggregate("", (s, n) => $"{s} {n}");
+                var sp = new List<int>();
+                for (int i = 0; i < param.M; i++)
+                    for (int j = 0; j < param.M; j++)
+                        sp.Add(map[j, i].N);
+                var permutation = sp.Aggregate("", (s, n) => $"{s} {n}");
                 Console.WriteLine($"image: {imageName}\n time: {sw.Elapsed}\n" +
                                   $"{permutation}");
             }
