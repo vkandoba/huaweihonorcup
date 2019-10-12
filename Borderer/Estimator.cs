@@ -9,7 +9,9 @@ namespace Borderer
         double MeasureLeftRight(Bitmap image, ISquare left, ISquare right);
         double MeasureTopBottom(Bitmap image, ISquare top, ISquare bottom);
         double MeasureSquare(Bitmap image, Square square);
-
+        double RecursiveMeasureSquare(Bitmap image, Square square);
+        double RecursiveMeasureLeftRight(Bitmap image, ISquare left, ISquare right);
+        double RecursiveMeasureTopBottom(Bitmap image, ISquare top, ISquare bottom);
     }
 
     public class Estimator : IEstimator
@@ -62,5 +64,32 @@ namespace Borderer
                     MeasureTopBottom(image, square.First, square.Thrid) +
                     MeasureLeftRight(image, square.Thrid, square.Four) +
                     MeasureTopBottom(image, square.Second, square.Four))/ 4.0;
+
+        public double RecursiveMeasureSquare(Bitmap image, Square square) =>
+            (RecursiveMeasureLeftRight(image, square.First, square.Second) +
+             RecursiveMeasureTopBottom(image, square.First, square.Thrid) +
+             RecursiveMeasureLeftRight(image, square.Thrid, square.Four) +
+             RecursiveMeasureTopBottom(image, square.Second, square.Four)) / 4.0;
+
+        public double RecursiveMeasureLeftRight(Bitmap image, ISquare left, ISquare right)
+        {
+            var leftS = left as Square;
+            var rightS = right as Square;
+            if (leftS == null || rightS == null)
+                return MeasureLeftRight(image, left, right);
+
+            return (RecursiveMeasureLeftRight(image, leftS.Second, rightS.First) +
+                    RecursiveMeasureLeftRight(image, leftS.Four, rightS.Thrid)) / 2.0;
+        }
+        public double RecursiveMeasureTopBottom(Bitmap image, ISquare top, ISquare bottom)
+        {
+            var topS = top as Square;
+            var bottomS = bottom as Square;
+            if (topS == null || bottomS == null)
+                return MeasureTopBottom(image, top, bottom);
+
+            return (RecursiveMeasureTopBottom(image, topS.Thrid, bottomS.First) +
+                    RecursiveMeasureTopBottom(image, topS.Four, bottomS.Second)) / 2.0;
+        }
     }
 }

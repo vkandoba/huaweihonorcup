@@ -66,14 +66,14 @@ namespace Borderer
 
             var seconds = slices
                             .Where(x => !first.HasCross(x))
-                            .OrderBy(x => estimator.MeasureLeftRight(image, first, x))
+                            .OrderBy(x => estimator.RecursiveMeasureLeftRight(image, first, x))
                             .ToArray();
             var count = 0;
             foreach (var second in seconds.Take(n))
             {
                 var thrids = slices
                     .Where(x => !first.HasCross(x) && !second.HasCross(x))
-                    .OrderBy(x => estimator.MeasureTopBottom(image, first, x))
+                    .OrderBy(x => estimator.RecursiveMeasureTopBottom(image, first, x))
                     .ToArray();
                 foreach (var thrid in thrids.Take(n))
                 {
@@ -84,7 +84,7 @@ namespace Borderer
                     {
                         count++;
                         var square = new Square(first, second, thrid, four);
-                        var f = estimator.MeasureSquare(image, square);
+                        var f = estimator.RecursiveMeasureSquare(image, square);
                         if (f < bestF)
                         {
                             bestF = f;
