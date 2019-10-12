@@ -6,18 +6,20 @@ namespace Borderer
 {
     public interface IEstimator
     {
-        double MeasureH(Bitmap image, ISquare left, ISquare right);
-        double MeasureV(Bitmap image, ISquare top, ISquare bottom);
+        double MeasureLeftRight(Bitmap image, ISquare left, ISquare right);
+        double MeasureTopBottom(Bitmap image, ISquare top, ISquare bottom);
+        double MeasureSquare(Bitmap image, Square square);
+
     }
 
     public class Estimator : IEstimator
     {
-        private IDictionary<ValueTuple<ISquare, ISquare>, double> cacheH = new Dictionary<ValueTuple<ISquare, ISquare>, double>();
-        private IDictionary<ValueTuple<ISquare, ISquare>, double> cacheV = new Dictionary<ValueTuple<ISquare, ISquare>, double>();
+        private IDictionary<ValueTuple<ISquare, ISquare>, double> cacheLeftRight = new Dictionary<ValueTuple<ISquare, ISquare>, double>();
+        private IDictionary<ValueTuple<ISquare, ISquare>, double> cacheTopBottom = new Dictionary<ValueTuple<ISquare, ISquare>, double>();
 
-        public double MeasureH(Bitmap image, ISquare left, ISquare right)
+        public double MeasureLeftRight(Bitmap image, ISquare left, ISquare right)
         {
-            if (cacheH.TryGetValue((left, right), out double f))
+            if (cacheLeftRight.TryGetValue((left, right), out double f))
                 return f;
 
             var total = 0.0;
@@ -27,17 +29,17 @@ namespace Borderer
                 var leftp = image.GetPixel(lxy.Item1, lxy.Item2);
                 var rxy = right.ToAbsolute(0, i);
                 var rightp = image.GetPixel(rxy.Item1, rxy.Item2);
-                total += Compare(leftp, rightp);
+                total += VMath.Diff(leftp, rightp);
             }
 
             var measure = total / left.Size;
-            cacheH.Add((left, right), measure);
+            cacheLeftRight.Add((left, right), measure);
             return measure;
         }
 
-        public double MeasureV(Bitmap image, ISquare top, ISquare bottom)
+        public double MeasureTopBottom(Bitmap image, ISquare top, ISquare bottom)
         {
-            if (cacheH.TryGetValue((top, bottom), out double f))
+            if (cacheTopBottom.TryGetValue((top, bottom), out double f))
                 return f;
 
             var total = 0.0;
@@ -47,17 +49,18 @@ namespace Borderer
                 var bottomp = image.GetPixel(bxy.Item1, bxy.Item2);
                 var txy = top.ToAbsolute(i, bottom.Size - 1);
                 var topp = image.GetPixel(txy.Item1, txy.Item2);
-                total += Compare(bottomp, topp);
+                total += VMath.Diff(bottomp, topp);
             }
 
             var measure = total / top.Size;
-            cacheH.Add((top, bottom), measure);
+            cacheTopBottom.Add((top, bottom), measure);
             return measure;
         }
 
-        private int Compare(Color p1, Color p2)
-        {
-            return Math.Abs(p1.R - p2.R) + Math.Abs(p1.G - p2.G) + Math.Abs(p1.B - p2.B);
-        }
+        public double MeasureSquare(Bitmap image, Square square) =>
+                    (MeasureLeftRight(image, square.First, square.Second) +
+                    MeasureTopBottom(image, square.First, square.Thrid) +
+                    MeasureLeftRight(image, square.Thrid, square.Four) +
+                    MeasureTopBottom(image, square.Second, square.Four))/ 4.0;
     }
 }
