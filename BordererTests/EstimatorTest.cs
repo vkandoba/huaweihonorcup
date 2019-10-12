@@ -42,7 +42,7 @@ namespace BordererTests
         public void TestEstimateImages()
         {
             var slices = Slice.GenerateBaseSlices(64);
-            var square = Square.MakeSquare(slices);
+            var square = SquareService.MakeSquare(slices);
             foreach (var imagefile in Directory.GetFiles(imageset))
             {
 
@@ -56,7 +56,7 @@ namespace BordererTests
                 sw.Start();
 
                 var imagef = square.DeepEstimate(image, estimator);
-                var originalf = square.DeepEstimate(source, estimator);
+                var originalf = square.DeepEstimate(source, new Estimator());
 
                 sw.Stop();
 
@@ -65,7 +65,7 @@ namespace BordererTests
         }
 
         [Test]
-        public void TestEstimateImages1()
+        public void TestEstimateSections()
         {
             var slices = Slice.GenerateBaseSlices(64);
             foreach (var imagefile in Directory.GetFiles(imageset))
@@ -102,7 +102,7 @@ namespace BordererTests
                     for (int j = 0; j < squares.GetLength(0); j++)
                     {
                         f[i, j] = squares[i, j].Estimate(image, estimator);
-                        t[i, j] = squares[i, j].Estimate(source, estimator);
+                        t[i, j] = squares[i, j].Estimate(source, new Estimator());
                     }
                 }
                 
@@ -130,71 +130,36 @@ namespace BordererTests
         }
 
         [Test]
-        public void TestEstimateImages2()
+        public void TestEstimateSmallSqueres()
         {
-            var slices = Slice.GenerateBaseSlices(64);
-            var s = new Slice[slices.Length];
-
-            var square = Square.MakeSquare(slices);
-            foreach (var imagefile in Directory.GetFiles(imageset).Take(3))
+            var estimator = new Estimator();
+            foreach (var imagefile in Directory.GetFiles(imageset))
             {
-
+                var slices = Slice.GenerateBaseSlices(64);
                 var imageName = Path.GetFileName(imagefile);
-                var image = new Bitmap(imagefile);
+                Console.WriteLine($"image: {imageName}");
+
                 var sourcefile = Path.Combine(imagesource, imageName);
+
+                var image = new Bitmap(imagefile);
                 var source = new Bitmap(sourcefile);
 
-                var size = param.M;
-                var squares = new ISquare[size / 2, size / 2];
-                for (int i = 0; i < size / 2; i++)
+                for (int y = 0; y < param.M - 1; y++)
                 {
-                    for (int j = 0; j < size / 2; j++)
+                    for (int x = 0; x < param.M - 1; x++)
                     {
-                        int x = 2 * i, y = 2 * j;
-                        squares[i, j] = new Square(new[]
-                        {
+                        var square = new Square(
                             slices[x, y],
                             slices[x + 1, y],
                             slices[x, y + 1],
-                            slices[x + 1, y + 1]
-                        });
-                    }
-                }
-
-                Console.WriteLine($"image: {imageName}");
-                var f = new double[size, size];
-                var t = new double[size, size];
-
-                for (int i = 0; i < squares.GetLength(0); i++)
-                {
-                    for (int j = 0; j < squares.GetLength(0); j++)
-                    {
-                        f[i, j] = squares[i, j].Estimate(image, estimator);
-                        t[i, j] = squares[i, j].Estimate(source, estimator);
-                    }
-                }
-                
-                Console.WriteLine($"f:");
-                for (int i = 0; i < squares.GetLength(0); i++)
-                {
-                    for (int j = 0; j < squares.GetLength(0); j++)
-                    {
-                        Console.Write($"{f[i,j]:N2}\t");
-                    }
-                    Console.WriteLine();
-                }
-
-                Console.WriteLine($"t:");
-                for (int i = 0; i < squares.GetLength(0); i++)
-                {
-                    for (int j = 0; j < squares.GetLength(0); j++)
-                    {
-                        Console.Write($"{t[i,j]:N2}\t");
+                            slices[x + 1, y + 1]);
+                        Console.Write($"{estimator.MeasureSquare(source, square):N2}\t");
                     }
                     Console.WriteLine();
                 }
                 Console.WriteLine();
             }
         }
+
     }
 }

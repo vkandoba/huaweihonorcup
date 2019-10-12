@@ -19,26 +19,27 @@ namespace BordererTests
             var estimator = new Estimator();
             service = new SquareService(estimator, 10);
             var slices = Slice.GenerateBaseSlices(64);
-            var square = Square.MakeSquare(slices);
-            foreach (var imagefile in Directory.GetFiles(imageset).Skip(3).Take(1))
+            var square = SquareService.MakeSquare(slices);
+            foreach (var imagefile in Directory.GetFiles(imageset).Skip(0).Take(1))
             {
 
                 var imageName = Path.GetFileNameWithoutExtension(imagefile);
                 var image = new Bitmap(imagefile);
+                var adjusted = image.AdjustContrast(2);
                 var sourcefile = Path.Combine(imagesource, imageName + ".png");
                 var source = new Bitmap(sourcefile);
 
                 var sw = new Stopwatch();
-
                 sw.Start();
 
-                var squares = service.GetSquares(image, slices.Cast<Slice>().ToArray());
+                var array = slices.Cast<Slice>().ToArray();
+                var squares = service.GetSquares(image, array);
 
                 sw.Stop();
 
                 Console.WriteLine($"image: {imageName}\n time: {sw.Elapsed}\n");
 
-                foreach (var pair in squares.OrderBy(x => x.Value.F))
+                foreach (var pair in squares.OrderBy(x => x.Value.F).Take(param.M * param.M))
                 {
                     var N = (pair.Key as Slice).N;
                     Console.WriteLine($"{N} {pair.Value.F}");
@@ -57,7 +58,7 @@ namespace BordererTests
             var estimator = new Estimator();
             service = new SquareService(estimator, 20);
             var slices = Slice.GenerateBaseSlices(64);
-            var square = Square.MakeSquare(slices);
+            var square = SquareService.MakeSquare(slices);
             foreach (var imagefile in Directory.GetFiles(imageset).Take(1))
             {
 
@@ -97,7 +98,7 @@ namespace BordererTests
             var estimator = new Estimator();
             service = new SquareService(estimator, 10);
             var slices = Slice.GenerateBaseSlices(64);
-            var square = Square.MakeSquare(slices);
+            var square = SquareService.MakeSquare(slices);
             foreach (var imagefile in Directory.GetFiles(imageset).Take(1))
             {
 

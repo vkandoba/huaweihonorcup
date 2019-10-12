@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace Borderer
@@ -33,6 +34,19 @@ namespace Borderer
                         yield return permutation;
                     used[i] = false; a.Pop();
                 }
+        }
+
+        public static int Diff(Color p1, Color p2)
+        {
+            return Math.Abs(p1.R - p2.R) + Math.Abs(p1.G - p2.G) + Math.Abs(p1.B - p2.B);
+        }
+
+        public static int Diff2(Color p1, Color p2)
+        {
+            var diffR = Math.Abs(p1.R - p2.R);
+            var diffG = Math.Abs(p1.G - p2.G);
+            var diffB = Math.Abs(p1.B - p2.B);
+            return diffR * diffR + diffG * diffG + diffB * diffB;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace BordererTests
             foreach (var imagefile in Directory.GetFiles(imageset).Take(10))
             {
                 var slices = Slice.GenerateBaseSlices(64);
-                var square = Square.MakeSquare(slices);
+                var square = SquareService.MakeSquare(slices);
 
                 var imageName = Path.GetFileName(imagefile);
                 var image = new Bitmap(imagefile);
@@ -38,7 +38,7 @@ namespace BordererTests
             foreach (var imagefile in Directory.GetFiles(imageset).Take(10))
             {
                 var slices = Slice.GenerateBaseSlices(64);
-                var square = Square.MakeSquare(slices);
+                var square = SquareService.MakeSquare(slices);
 
                 var imageName = Path.GetFileName(imagefile);
                 var name = Path.GetFileNameWithoutExtension(imagefile);
