@@ -1,15 +1,42 @@
-﻿using Borderer;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using Borderer;
 using NUnit.Framework;
 
 namespace BordererTests
 {
+    public class TrainImage
+    {
+        public string Name { get; set; }
+        public Bitmap Image { get; set; }
+        public Bitmap Original { get; set; }
+        public ImageParameters Param { get; set; }
+    }
+
     [TestFixture]
     public class TestBase
     {
-        protected static string imageset = @"C:\huaway\data_train\64";
-        protected static string imagesource = @"C:\huaway\data_train\64-sources";
+        private static string basedir = @"C:\huaway\data_train\";
+        protected static string imageset64 = @"C:\huaway\data_train\64";
+        protected static string imageset32 = @"C:\huaway\data_train\32";
+        protected static string imagesource64 = @"C:\huaway\data_train\64-sources";
 
         protected ImageParameters param = new ImageParameters(64);
+
+        protected TrainImage ReadImage(string name, int p = 64)
+        {
+            var dir = Path.Combine(basedir, $"{p}");
+            var sourcedir = Path.Combine(basedir, $"{p}-sources");
+
+            return new TrainImage
+            {
+                Name = name,
+                Image = new Bitmap(Path.Combine(dir, $"{name}.png")),
+                Original = new Bitmap(Path.Combine(sourcedir, $"{name}.png")),
+                Param = new ImageParameters(p),
+            };
+        }
 
         [SetUp]
         public virtual void SetUp()
@@ -22,6 +49,5 @@ namespace BordererTests
         {
 
         }
-
     }
 }

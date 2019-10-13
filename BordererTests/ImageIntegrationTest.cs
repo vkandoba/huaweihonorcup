@@ -9,51 +9,43 @@ namespace BordererTests
 {
     public class ImageIntegrationTest : TestBase
     {
-        [Test]
-        public void TestReadImage()
+        [TestCase("1200")]
+        public void TestReadImage(string name)
         {
-            foreach (var imagefile in Directory.GetFiles(imageset).Take(1))
-            {
-                var image = new Bitmap(imagefile);
-                var pixel = image.GetPixel(100, 100);
-                Console.WriteLine($"image: {imagefile} \n" +
-                                  $"width: {image.Width} height: {image.Height} format: {image.PixelFormat} " +
-                                  $"{image.RawFormat} \n" +
-                                  $"pixel: {pixel} \n");
-            }
+            var train = ReadImage(name);
+            Console.WriteLine($"image: {train.Name} \n" +
+                              $"width: {train.Image.Width} height: {train.Image.Height} format: {train.Image.PixelFormat} " +
+                              $"{train.Image.RawFormat} \n");
         }
 
-        [Test]
-        public void TestDrawSquare()
+        [TestCase("1200")]
+        public void TestDrawSquare(string name)
         {
-            foreach (var imagefile in Directory.GetFiles(imageset).Take(1))
+            var image = ReadImage(name).Image;
+            var allslices = Slice.GenerateBaseSlices(64);
+            var slices = new[]
             {
-                var image = new Bitmap(imagefile);
-                var allslices = Slice.GenerateBaseSlices(64);
-                var slices = new[]
-                {
-                    allslices[0, 0],
-                    allslices[1, 0],
-                    allslices[1, 2],
-                    allslices[4, 2]
-                };
-                var square = new Square(slices);
-                var bitmap = square.Draw(image);
-                bitmap.Save(@"C:\huaway\tests\integrationdrawsquare.png");
-            }
+                allslices[0, 0],
+                allslices[1, 0],
+                allslices[1, 2],
+                allslices[4, 2]
+            };
+            var square = new Square(slices);
+            var bitmap = square.Draw(image);
+            bitmap.Save(@"C:\huaway\tests\integrationsquare.png");
         }
 
         [Test]
         public void TestSplitAndDrawImage()
         {
-            foreach (var imagefile in Directory.GetFiles(imageset).Take(3))
+            foreach (var imagefile in Directory.GetFiles(imageset64).Take(3))
             {
                 var slices = Slice.GenerateBaseSlices(64);
                 var square = SquareService.MakeSquare(slices);
 
                 var imageName = Path.GetFileName(imagefile);
                 var image = new Bitmap(imagefile);
-                var sourcefile = Path.Combine(imagesource, imageName);
+                var sourcefile = Path.Combine(imagesource64, imageName);
                 var source = new Bitmap(sourcefile);
 
                 var bitmap1 = square.Draw(image);
@@ -63,8 +55,8 @@ namespace BordererTests
             }
         }
 
-        [Test]
-        public void TestRecoveImage()
+        [TestCase("1200")]
+        public void TestRecoveImageByPermutation(string name)
         {
             var order = new int[]
             {
@@ -77,25 +69,22 @@ namespace BordererTests
                 52, 15, 5, 34, 36,  4, 35,  8,
                 49, 9,  2, 55, 7,  11, 47,  3
             };
-            foreach (var imagefile in Directory.GetFiles(imageset).Take(1))
+
+            var slices = Slice.GenerateBaseSlices(64);
+
+            var train = ReadImage(name);
+
+            var array = slices.Cast<Slice>().OrderBy(s => s.N).ToArray();
+            for (int i = 0; i < order.Length; i++)
             {
-                var slices = Slice.GenerateBaseSlices(64);
-
-                var imageName = Path.GetFileName(imagefile);
-                var image = new Bitmap(imagefile);
-
-                var array = slices.Cast<Slice>().OrderBy(s => s.N).ToArray();
-                for (int i = 0; i < order.Length; i++)
-                {
-                    var x = i % param.M;
-                    var y = i / param.M;
-                    slices[x, y] = array[order[i]];
-                }
-                var square = SquareService.MakeSquare(slices);
-
-                var bitmap1 = square.Draw(image);
-                bitmap1.Save($"C:\\huaway\\tests\\recoveimage-{imageName}");
+                var x = i % param.M;
+                var y = i / param.M;
+                slices[x, y] = array[order[i]];
             }
+            var square = SquareService.MakeSquare(slices);
+
+            var bitmap1 = square.Draw(train.Image);
+            bitmap1.Save($"C:\\huaway\\tests\\recoveimage-{train.Name}.png");
         }
     }
 }
