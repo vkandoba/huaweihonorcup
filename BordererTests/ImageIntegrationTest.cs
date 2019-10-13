@@ -35,23 +35,20 @@ namespace BordererTests
             bitmap.Save(@"C:\huaway\tests\integrationsquare.png");
         }
 
-        [Test]
-        public void TestSplitAndDrawImage()
+        [TestCase(3)]
+        public void TestSplitAndDrawImage(int count)
         {
-            foreach (var imagefile in Directory.GetFiles(imageset64).Take(3))
+            foreach (var name in set64.Take(count))
             {
                 var slices = Slice.GenerateBaseSlices(64);
                 var square = SquareService.MakeSquare(slices);
 
-                var imageName = Path.GetFileName(imagefile);
-                var image = new Bitmap(imagefile);
-                var sourcefile = Path.Combine(imagesource64, imageName);
-                var source = new Bitmap(sourcefile);
+                var train = ReadImage(name);
 
-                var bitmap1 = square.Draw(image);
-                var bitmap2 = square.Draw(source);
-                bitmap1.Save($"C:\\huaway\\tests\\drawimage-{imageName}");
-                bitmap2.Save($"C:\\huaway\\tests\\drawsource-{imageName}");
+                var bitmap1 = square.Draw(train.Image);
+                var bitmap2 = square.Draw(train.Original);
+                bitmap1.Save($"C:\\huaway\\tests\\drawimage-{name}.png");
+                bitmap2.Save($"C:\\huaway\\tests\\drawsource-{name}.png");
             }
         }
 

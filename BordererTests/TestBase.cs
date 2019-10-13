@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using Borderer;
 using NUnit.Framework;
 
@@ -18,6 +19,10 @@ namespace BordererTests
     public class TestBase
     {
         private static string basedir = @"C:\huaway\data_train\";
+        protected static string[] set16 = ToFileNames(16);
+        protected static string[] set32 = ToFileNames(32);
+        protected static string[] set64 = ToFileNames(64);
+
         protected static string imageset64 = @"C:\huaway\data_train\64";
         protected static string imageset32 = @"C:\huaway\data_train\32";
         protected static string imagesource64 = @"C:\huaway\data_train\64-sources";
@@ -48,6 +53,11 @@ namespace BordererTests
         public virtual void TearDown()
         {
 
+        }
+
+        private static string[] ToFileNames(int p)
+        {
+            return Directory.GetFiles(Path.Combine(basedir, $"{p}")).Select(Path.GetFileNameWithoutExtension).ToArray();
         }
     }
 }
