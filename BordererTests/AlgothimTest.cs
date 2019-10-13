@@ -34,7 +34,7 @@ namespace BordererTests
 
                 var sw = new Stopwatch();
                 sw.Start();
-                var answer = imgbuilder.RecursiveCollect(train.Image, train.Param, slices, 10);
+                var answer = imgbuilder.RecursiveCollect(train.Image, train.Param, slices, 4);
                 sw.Stop();
 
                 var map = answer.Apply(p);

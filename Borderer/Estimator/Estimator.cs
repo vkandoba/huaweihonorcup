@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Drawing;
 using Borderer.Helpers;
 using Borderer.Squares;
 
@@ -6,36 +8,45 @@ namespace Borderer.Estimator
 {
     public class Estimator : IEstimator
     {
+        private ConcurrentDictionary<ValueTuple<ISquare, int>, Color[]> lineYCache = new ConcurrentDictionary<ValueTuple<ISquare, int>, Color[]>();
+        private ConcurrentDictionary<ValueTuple<ISquare, int>, Color[]> lineXCache = new ConcurrentDictionary<ValueTuple<ISquare, int>, Color[]>();
+
         private Color[] GetLineY(Bitmap image, ISquare square, int x)
         {
-            var size = square.Size;
-            var colors = new Color[size];
-            lock (image)
+            return lineYCache.GetOrAdd((square, x), key =>
             {
-                for (int i = 0; i < size; i++)
+                var size = square.Size;
+                var colors = new Color[size];
+                lock (image)
                 {
-                    var coor = square.ToAbsolute(x, i);
-                    colors[i] = image.GetPixel(coor.Item1, coor.Item2);
+                    for (int i = 0; i < size; i++)
+                    {
+                        var coor = square.ToAbsolute(x, i);
+                        colors[i] = image.GetPixel(coor.Item1, coor.Item2);
+                    }
                 }
-            }
 
-            return colors;
+                return colors;
+            });
         }
 
         private Color[] GetLineX(Bitmap image, ISquare square, int y)
         {
-            var size = square.Size;
-            var colors = new Color[size];
-            lock (image)
+            return lineXCache.GetOrAdd((square, y), key =>
             {
-                for (int i = 0; i < size; i++)
+                var size = square.Size;
+                var colors = new Color[size];
+                lock (image)
                 {
-                    var coor = square.ToAbsolute(i, y);
-                    colors[i] = image.GetPixel(coor.Item1, coor.Item2);
+                    for (int i = 0; i < size; i++)
+                    {
+                        var coor = square.ToAbsolute(i, y);
+                        colors[i] = image.GetPixel(coor.Item1, coor.Item2);
+                    }
                 }
-            }
 
-            return colors;
+                return colors;
+            });
         }
 
         public double MeasureLeftRight(Bitmap image, ISquare left, ISquare right)

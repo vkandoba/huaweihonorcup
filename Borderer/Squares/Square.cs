@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Borderer.Estimator;
 using Borderer.Helpers;
 
@@ -18,6 +20,42 @@ namespace Borderer.Squares
         public ISquare[] Parts { get; set; }
 
         private readonly int baseSize;
+
+        private SortedSet<int> numbers = null;
+
+        private SortedSet<int> Numbers
+        {
+            get
+            {
+                if (numbers == null)
+                    numbers = MakeNumbersSet();
+                return numbers;
+            }
+        }
+
+        private SortedSet<int> MakeNumbersSet()
+        {
+            var set = new SortedSet<int>();
+            if (First is Slice)
+            {
+                set.Add((First as Slice).N);
+                set.Add((Second as Slice).N);
+                set.Add((Thrid as Slice).N);
+                set.Add((Four as Slice).N);
+            }
+            else
+            {
+                foreach (var n in (First as Square).Numbers)
+                    set.Add(n);
+                foreach (var n in (Second as Square).Numbers)
+                    set.Add(n);
+                foreach (var n in (Thrid as Square).Numbers)
+                    set.Add(n);
+                foreach (var n in (Four as Square).Numbers)
+                    set.Add(n);
+            }
+            return set;
+        }
 
         public Square(ISquare[] parts)
         {
@@ -98,19 +136,31 @@ namespace Borderer.Squares
             if (square == null || square.Size != this.Size)
                 throw new ArgumentException("slice iscross has invalid argument", nameof(other));
 
-            foreach (var myPart in Parts)
-                foreach (var otherPart in square.Parts)
-                    if (Equals(myPart, otherPart) || myPart.HasCross(otherPart))
-                        return true;
+            foreach (var n in square.Numbers)
+                if (Numbers.Contains(n))
+                    return true;
 
             return false;
+        }
+
+        private string str = null;
+
+        private string String
+        {
+            get
+            {
+                if (str == null)
+                    str = ToString();
+
+                return str;
+            }
         }
 
         public override string ToString() => $"{First} {Second} {Thrid} {Four}";
 
         protected bool Equals(Square other)
         {
-            return Equals(First, other.First) && Equals(Second, other.Second) && Equals(Thrid, other.Thrid) && Equals(Four, other.Four);
+            return String == other.String;
         }
 
         public override bool Equals(object obj)
@@ -125,11 +175,7 @@ namespace Borderer.Squares
         {
             unchecked
             {
-                var hashCode = (First != null ? First.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (Second != null ? Second.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (Thrid != null ? Thrid.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (Four != null ? Four.GetHashCode() : 0);
-                return hashCode;
+               return String.GetHashCode();
             }
         }
     }
