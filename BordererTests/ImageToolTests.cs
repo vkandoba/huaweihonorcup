@@ -8,52 +8,53 @@ namespace BordererTests
 {
     public class ImageToolTests : TestBase
     {
-        [Test]
-        public void TestToGrayStyle()
+        private string[] set;
+        private int p;
+
+        public override void SetUp()
         {
-            foreach (var imagefile in Directory.GetFiles(imageset).Take(10))
+            base.SetUp();
+            set = set32;
+            p = 32;
+        }
+
+        [TestCase(10)]
+        public void TestToGrayStyle(int count)
+        {
+            foreach (var name in set.Take(count))
             {
-                var slices = Slice.GenerateBaseSlices(64);
+                var train = ReadImage(name, p);
+                var slices = Slice.GenerateBaseSlices(p);
                 var square = SquareService.MakeSquare(slices);
 
-                var imageName = Path.GetFileName(imagefile);
-                var image = new Bitmap(imagefile);
-                var sourcefile = Path.Combine(imagesource, imageName);
-                var source = new Bitmap(sourcefile);
-
-                var bitmap1 = square.Draw(image);
-                var bitmap2 = square.Draw(source);
-                var bitmap3 = image.ToGrayStyle();
-                var bitmap4 = source.ToGrayStyle();
-                bitmap1.Save($"C:\\huaway\\tests\\image-{imageName}");
-                bitmap2.Save($"C:\\huaway\\tests\\source-{imageName}");
-                bitmap3.Save($"C:\\huaway\\tests\\image-gray-{imageName}");
-                bitmap4.Save($"C:\\huaway\\tests\\source-gray-{imageName}");
+                var bitmap1 = square.Draw(train.Image);
+                var bitmap2 = square.Draw(train.Original);
+                var bitmap3 = train.Image.ToGrayStyle();
+                var bitmap4 = train.Original.ToGrayStyle();
+                bitmap1.Save($"C:\\huaway\\tool\\image-{name}.png");
+                bitmap2.Save($"C:\\huaway\\tool\\source-{name}.png");
+                bitmap3.Save($"C:\\huaway\\tool\\image-gray-{name}.png");
+                bitmap4.Save($"C:\\huaway\\tool\\source-gray-{name}.png");
             }
         }
 
-        [Test]
-        public void TestTAdjustContrast()
+        [TestCase(10)]
+        public void TestTAdjustContrast(int count)
         {
-            foreach (var imagefile in Directory.GetFiles(imageset).Take(10))
+            foreach (var name in set.Take(count))
             {
-                var slices = Slice.GenerateBaseSlices(64);
+                var train = ReadImage(name, p);
+                var slices = Slice.GenerateBaseSlices(p);
                 var square = SquareService.MakeSquare(slices);
 
-                var imageName = Path.GetFileName(imagefile);
-                var name = Path.GetFileNameWithoutExtension(imagefile);
-                var image = new Bitmap(imagefile);
-                var sourcefile = Path.Combine(imagesource, imageName);
-                var source = new Bitmap(sourcefile);
-
-                var bitmap1 = square.Draw(image);
-                var bitmap2 = square.Draw(source);
-                var bitmap3 = image.AdjustContrast(2);
-                var bitmap4 = source.AdjustContrast(2);
-                bitmap1.Save($"C:\\huaway\\tests\\{imageName}-split.png");
-                bitmap2.Save($"C:\\huaway\\tests\\{imageName}.png");
-                bitmap3.Save($"C:\\huaway\\tests\\{imageName}-split-contrast.png");
-                bitmap4.Save($"C:\\huaway\\tests\\{imageName}-contrast.png");
+                var bitmap1 = square.Draw(train.Image);
+                var bitmap2 = square.Draw(train.Original);
+                var bitmap3 = train.Image.AdjustContrast(2);
+                var bitmap4 = train.Original.AdjustContrast(2);
+                bitmap1.Save($"C:\\huaway\\tool\\image-{name}.png");
+                bitmap2.Save($"C:\\huaway\\tool\\source-{name}.png");
+                bitmap3.Save($"C:\\huaway\\tool\\image-contrast-{name}.png");
+                bitmap4.Save($"C:\\huaway\\tool\\source-contrast-{name}.png");
             }
         }
     }
