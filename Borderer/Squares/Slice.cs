@@ -2,7 +2,7 @@
 using System.Drawing;
 using Borderer.Estimator;
 
-namespace Borderer
+namespace Borderer.Squares
 {
     public class Slice : ISquare
     {

@@ -1,4 +1,6 @@
 ﻿using System.Drawing;
+using Borderer.Helpers;
+using Borderer.Squares;
 
 namespace Borderer.Estimator
 {

@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using Borderer;
 using Borderer.Estimator;
+using Borderer.Helpers;
+using Borderer.Squares;
 using NUnit.Framework;
 
 namespace BordererTests
@@ -117,7 +119,7 @@ namespace BordererTests
 
                 Console.WriteLine($"image: {train.Name}");
 
-                var f = new double[train.Param.M - 1, train.Param.M - 1]
+                var f = new double[train.Param.M - 1, train.Param.M - 1];
                 var estimator = new Estimator();
                 for (int y = 0; y < train.Param.M - 1; y++)
                 {

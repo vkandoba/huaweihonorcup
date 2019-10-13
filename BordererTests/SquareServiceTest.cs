@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using Borderer;
 using Borderer.Estimator;
+using Borderer.Helpers;
+using Borderer.Squares;
 using NUnit.Framework;
 
 namespace BordererTests

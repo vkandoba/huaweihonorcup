@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 
-namespace Borderer
+namespace Borderer.Helpers
 {
     public static class ImageTool
     {

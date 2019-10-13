@@ -44,21 +44,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArrayExtensions.cs" />
+    <Compile Include="Helpers\ArrayExtensions.cs" />
     <Compile Include="Estimator\CacheEstimator.cs" />
     <Compile Include="Estimator\IEstimator.cs" />
     <Compile Include="ImageParameters.cs" />
-    <Compile Include="ImageTool.cs" />
-    <Compile Include="ISquare.cs" />
+    <Compile Include="Helpers\ImageTool.cs" />
+    <Compile Include="Squares\ISquare.cs" />
     <Compile Include="Estimator\Estimator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Estimator\RecursiveEstimator.cs" />
-    <Compile Include="Slice.cs" />
-    <Compile Include="Square.cs" />
-    <Compile Include="SquareAndMeasure.cs" />
-    <Compile Include="SquareService.cs" />
-    <Compile Include="VMath.cs" />
+    <Compile Include="Squares\Slice.cs" />
+    <Compile Include="Squares\Square.cs" />
+    <Compile Include="Squares\SquareAndMeasure.cs" />
+    <Compile Include="Squares\SquareService.cs" />
+    <Compile Include="Helpers\VMath.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

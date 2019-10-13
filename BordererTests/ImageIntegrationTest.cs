@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Borderer;
+using Borderer.Squares;
 using NUnit.Framework;
 
 namespace BordererTests

@@ -1,4 +1,4 @@
-﻿namespace Borderer
+﻿namespace Borderer.Squares
 {
     public class SquareAndMeasure
     {

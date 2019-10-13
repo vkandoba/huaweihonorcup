@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 
-namespace Borderer
+namespace Borderer.Helpers
 {
     public static class VMath
     {

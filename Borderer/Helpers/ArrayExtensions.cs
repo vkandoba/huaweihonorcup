@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Runtime.CompilerServices;
 using System.Text;
+using Borderer.Squares;
 
-namespace Borderer
+namespace Borderer.Helpers
 {
     public static class ArrayExtensions
     {

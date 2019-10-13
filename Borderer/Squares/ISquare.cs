@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using Borderer.Estimator;
 
-namespace Borderer
+namespace Borderer.Squares
 {
     public interface ISquare
     {

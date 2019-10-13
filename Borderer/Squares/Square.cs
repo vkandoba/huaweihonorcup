@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using Borderer.Estimator;
+using Borderer.Helpers;
 
-namespace Borderer
+namespace Borderer.Squares
 {
     public class Square : ISquare
     {

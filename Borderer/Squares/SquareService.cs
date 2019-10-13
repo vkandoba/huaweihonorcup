@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Linq;
 using Borderer.Estimator;
 
-namespace Borderer
+namespace Borderer.Squares
 {
     public class SquareService
     {
