@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -19,20 +20,51 @@ namespace Borderer.Squares
 
         public IDictionary<ISquare, SquareAndMeasure> BuildLikelySquares(Bitmap image, ISquare[] parts, int deep)
         {
-            var result = new ConcurrentDictionary<ISquare, SquareAndMeasure>();
+            var usedFirst = new HashSet<ISquare>();
+            var usedSecond = new HashSet<ISquare>();
+            var usedThrid = new HashSet<ISquare>();
+            var usedFour = new HashSet<ISquare>();
+
+            var result = new Dictionary<ISquare, SquareAndMeasure>();
             var rest = new List<ISquare>(parts);
-            var tasks = rest.Select(slice => Task.Run(() =>
+            foreach (var slice in rest)
             {
-                var squareAndF = BuildLikelySquare(image, slice, parts, deep);
+                var squareAndF = BuildLikelySquare(image, slice, parts, deep,
+                        first => parts
+                        .Where(x => !usedSecond.Contains(x) && !first.HasCross(x))
+                        .OrderBy(x => estimator.MeasureLeftRight(image, first, x))
+                        .Take(deep)
+                        .ToArray(),
+                        (first, second) => parts
+                            .Where(x => !usedThrid.Contains(x) && !first.HasCross(x) && !second.HasCross(x))
+                            .OrderBy(x => estimator.MeasureTopBottom(image, first, x))
+                            .Take(deep)
+                            .ToArray(),
+                        (first, second, thrid) => parts
+                            .Where(x => !usedFour.Contains(x) && !first.HasCross(x) && !second.HasCross(x) && !thrid.HasCross(x))
+                            .OrderBy(x => (estimator.MeasureLeftRight(image, thrid, x) + estimator.MeasureTopBottom(image, second, x)) / 2.0)
+                            .Take(deep)
+                            .ToArray()
+                    );
                 if (squareAndF != null)
-                    result.AddOrUpdate(slice, (s) => squareAndF, (s, v) => squareAndF);
-            })).ToArray();
-            Task.WaitAll(tasks);
+                {
+                    var square = squareAndF.Square as Square;
+                    usedFirst.Add(square.First);
+                    usedSecond.Add(square.Second);
+                    usedThrid.Add(square.Thrid);
+                    usedFour.Add(square.Four);
+
+                    result.Add(slice, squareAndF);
+                }
+            }
 
             return result;
         }
 
-        public SquareAndMeasure BuildLikelySquare(Bitmap image, ISquare first, ISquare[] slices, int deep)
+        public SquareAndMeasure BuildLikelySquare(Bitmap image, ISquare first, ISquare[] slices, int deep,
+            Func<ISquare, ISquare[]> selectSeconds,
+            Func<ISquare, ISquare, ISquare[]> selectThrids,
+            Func<ISquare, ISquare, ISquare, ISquare[]> selectFours)
         {
             Square best = null;
             double bestF = double.MaxValue;
