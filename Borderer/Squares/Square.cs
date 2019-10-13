@@ -79,15 +79,15 @@ namespace Borderer.Squares
              estimator.MeasureLeftRight(image, Thrid, Four) +
              estimator.MeasureTopBottom(image, Second, Four)) / 4.0;
 
-        public Slice[,] Apply()
+        public Slice[,] Apply(int p)
         {
-            var slices = new Slice[Size / 64, Size / 64];
-            var shift = baseSize / 64;
+            var slices = new Slice[Size / p, Size / p];
+            var shift = baseSize / p;
 
-            slices.CopyPart(First.Apply(), 0, 0);
-            slices.CopyPart(Second.Apply(), shift, 0);
-            slices.CopyPart(Thrid.Apply(), 0, shift);
-            slices.CopyPart(Four.Apply(), shift, shift);
+            slices.CopyPart(First.Apply(p), 0, 0);
+            slices.CopyPart(Second.Apply(p), shift, 0);
+            slices.CopyPart(Thrid.Apply(p), 0, shift);
+            slices.CopyPart(Four.Apply(p), shift, shift);
 
             return slices;
         }

@@ -48,8 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlgothimTest.cs" />
     <Compile Include="ImageToolTests.cs" />
-    <Compile Include="SquareServiceTest.cs" />
+    <Compile Include="SquareBuilderTest.cs" />
     <Compile Include="EstimatorTest.cs" />
     <Compile Include="ImageIntegrationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

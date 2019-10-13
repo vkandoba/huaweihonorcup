@@ -18,11 +18,11 @@ namespace Borderer
             var param = new ImageParameters(p);
             foreach (var imagefile in Directory.GetFiles(imageset))
             {
-                var service = new SquareService(new Estimator.Estimator(), 4);
+                var builder = new ImageBuilder(new SquareBuilder(new Estimator.Estimator()));
                 var slices = Slice.GenerateBaseSlices(p);
                 var image = new Bitmap(imagefile);
-                var answer = service.RecursiveCollect(image, param, slices);
-                var map = answer.Apply();
+                var answer = builder.RecursiveCollect(image, param, slices, 4);
+                var map = answer.Apply(p);
                 var permutation = map.GetPermutation().Aggregate("", (s, n) => $"{s} {n}");
                 Console.WriteLine(Path.GetFileName(imagefile));
                 Console.WriteLine(permutation);

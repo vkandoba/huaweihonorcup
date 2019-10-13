@@ -30,7 +30,7 @@ namespace Borderer.Squares
         public Bitmap Draw(Bitmap original) =>
             original.Clone(new Rectangle(ShiftX, ShiftY, parameters.P, parameters.P), original.PixelFormat);
 
-        public Slice[,] Apply() => new Slice[1,1] {{this}};
+        public Slice[,] Apply(int p) => new Slice[1,1] {{this}};
 
         public double Estimate(Bitmap image, IEstimator estimator) => 0;
         public bool HasCross(ISquare other)

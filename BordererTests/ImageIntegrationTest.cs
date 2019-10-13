@@ -40,7 +40,7 @@ namespace BordererTests
             foreach (var name in set64.Take(count))
             {
                 var slices = Slice.GenerateBaseSlices(64);
-                var square = SquareService.MakeSquare(slices);
+                var square = SquareBuilder.MakeSquare(slices);
 
                 var train = ReadImage(name);
 
@@ -77,7 +77,7 @@ namespace BordererTests
                 var y = i / param.M;
                 slices[x, y] = array[order[i]];
             }
-            var square = SquareService.MakeSquare(slices);
+            var square = SquareBuilder.MakeSquare(slices);
 
             var bitmap1 = square.Draw(train.Image);
             bitmap1.Save($"C:\\huaway\\tests\\recoveimage-{train.Name}.png");

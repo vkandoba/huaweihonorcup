@@ -49,6 +49,7 @@
     <Compile Include="Estimator\IEstimator.cs" />
     <Compile Include="ImageParameters.cs" />
     <Compile Include="Helpers\ImageTool.cs" />
+    <Compile Include="Squares\ImageBuilder.cs" />
     <Compile Include="Squares\ISquare.cs" />
     <Compile Include="Estimator\Estimator.cs" />
     <Compile Include="Program.cs" />
@@ -57,7 +58,7 @@
     <Compile Include="Squares\Slice.cs" />
     <Compile Include="Squares\Square.cs" />
     <Compile Include="Squares\SquareAndMeasure.cs" />
-    <Compile Include="Squares\SquareService.cs" />
+    <Compile Include="Squares\SquareBuilder.cs" />
     <Compile Include="Helpers\VMath.cs" />
   </ItemGroup>
   <ItemGroup>

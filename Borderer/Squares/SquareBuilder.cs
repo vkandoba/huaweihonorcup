@@ -5,25 +5,24 @@ using Borderer.Estimator;
 
 namespace Borderer.Squares
 {
-    public class SquareService
+    public class SquareBuilder
     {
-        private readonly IEstimator estimator;
-        private readonly int n;
 
-        public SquareService(IEstimator estimator, int n)
+        private readonly IEstimator estimator;
+
+        public SquareBuilder(IEstimator estimator)
         {
             this.estimator = estimator;
-            this.n = n;
         }
 
-        public IDictionary<ISquare, SquareAndMeasure> GetSquares(Bitmap image, ISquare[] parts)
+        public IDictionary<ISquare, SquareAndMeasure> BuildLikelySquares(Bitmap image, ISquare[] parts, int deep)
         {
             var result = new Dictionary<ISquare, SquareAndMeasure>();
             var rest = new Queue<ISquare>(parts);
             while(rest.Any())
             {
                 var slice = rest.Dequeue();
-                var squareAndF = GetSquare(image, slice, parts);
+                var squareAndF = BuildLikelySquare(image, slice, parts, deep);
                 if (squareAndF != null)
                     result.Add(slice, squareAndF);
             }
@@ -31,28 +30,7 @@ namespace Borderer.Squares
             return result;
         }
 
-        public ISquare RecursiveCollect(Bitmap image, ImageParameters param, Slice[,] slices)
-        {
-            SquareAndMeasure[] squares = slices.Cast<Slice>().Select(slice => new SquareAndMeasure
-            {
-                Square = slice,
-                F = slice.Estimate(image, null)
-            }).ToArray();
-            var size = param.P;
-            do
-            {
-                squares = GetSquares(image, squares.Select(x => x.Square).ToArray())
-                    .Values
-                    .OrderBy(x => x.F)
-                    .ToArray();
-                size = squares.Any() ? squares.First().Square.Size : ImageParameters.__totalSize;
-            } while (size < ImageParameters.__totalSize);
-
-            var answer = squares.Any() ? squares.First().Square : SquareService.MakeSquare(slices);
-            return answer;
-        }
-
-        public SquareAndMeasure GetSquare(Bitmap image, ISquare first, ISquare[] slices)
+        public SquareAndMeasure BuildLikelySquare(Bitmap image, ISquare first, ISquare[] slices, int deep)
         {
             Square best = null;
             double bestF = double.MaxValue;
@@ -62,13 +40,13 @@ namespace Borderer.Squares
                             .OrderBy(x => estimator.MeasureLeftRight(image, first, x))
                             .ToArray();
             var count = 0;
-            foreach (var second in seconds.Take(n))
+            foreach (var second in seconds.Take(deep))
             {
                 var thrids = slices
                     .Where(x => !first.HasCross(x) && !second.HasCross(x))
                     .OrderBy(x => estimator.MeasureTopBottom(image, first, x))
                     .ToArray();
-                foreach (var thrid in thrids.Take(n))
+                foreach (var thrid in thrids.Take(deep))
                 {
                     var fours = slices
                         .Where(x => !first.HasCross(x) && !second.HasCross(x) && !thrid.HasCross(x))

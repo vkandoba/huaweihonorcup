@@ -31,7 +31,7 @@ namespace BordererTests
                 var train = ReadImage(name, p);
 
                 var slices = Slice.GenerateBaseSlices(p);
-                var square = SquareService.MakeSquare(slices);
+                var square = SquareBuilder.MakeSquare(slices);
                 var sw = new Stopwatch();
 
                 sw.Start();

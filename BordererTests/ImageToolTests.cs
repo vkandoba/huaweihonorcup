@@ -25,7 +25,7 @@ namespace BordererTests
             {
                 var train = ReadImage(name, p);
                 var slices = Slice.GenerateBaseSlices(p);
-                var square = SquareService.MakeSquare(slices);
+                var square = SquareBuilder.MakeSquare(slices);
 
                 var bitmap1 = square.Draw(train.Image);
                 var bitmap2 = square.Draw(train.Original);
@@ -45,7 +45,7 @@ namespace BordererTests
             {
                 var train = ReadImage(name, p);
                 var slices = Slice.GenerateBaseSlices(p);
-                var square = SquareService.MakeSquare(slices);
+                var square = SquareBuilder.MakeSquare(slices);
 
                 var bitmap1 = square.Draw(train.Image);
                 var bitmap2 = square.Draw(train.Original);

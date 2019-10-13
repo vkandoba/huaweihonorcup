@@ -8,7 +8,7 @@ namespace Borderer.Squares
         int Size { get; }
         (int, int) ToAbsolute(int x, int y);
         Bitmap Draw(Bitmap original);
-        Slice[,] Apply();
+        Slice[,] Apply(int p);
 
         double Estimate(Bitmap image, IEstimator estimator);
         bool HasCross(ISquare other);
