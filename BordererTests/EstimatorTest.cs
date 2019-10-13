@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
 using Borderer;
 using NUnit.Framework;
 
@@ -12,71 +9,66 @@ namespace BordererTests
     {
         private Estimator estimator;
 
+        private string[] set;
+        private int p;
+
         public override void SetUp()
         {
             base.SetUp();
+            set = set32;
+            p = 32;
             estimator = new Estimator();
         }
 
         [Test]
         public void TestEstimateSmallSquare()
         {
-            foreach (var imagefile in Directory.GetFiles(imageset).Take(1))
+            var train = ReadImage("1200");
+            var allslices = Slice.GenerateBaseSlices(64);
+            var slices = new[]
             {
-                var image = new Bitmap(imagefile);
-                var allslices = Slice.GenerateBaseSlices(64);
-                var slices = new[]
-                {
-                    allslices[0, 0],
-                    allslices[1, 0],
-                    allslices[0, 1],
-                    allslices[1, 1]
-                };
-                var square = new Square(slices);
-                var measure = square.Estimate(image, estimator);
-                Console.WriteLine($"measure: {measure}");
-            }
+                allslices[0, 0],
+                allslices[1, 0],
+                allslices[0, 1],
+                allslices[1, 1]
+            };
+            var square = new Square(slices);
+            var measure = square.Estimate(train.Image, estimator);
+            Console.WriteLine($"measure: {measure}");
         }
 
         [Test]
         public void TestEstimateImages()
         {
-            var slices = Slice.GenerateBaseSlices(64);
-            var square = SquareService.MakeSquare(slices);
-            foreach (var imagefile in Directory.GetFiles(imageset))
+            foreach (var name in set)
             {
+                var train = ReadImage(name, p);
 
-                var imageName = Path.GetFileName(imagefile);
-                var image = new Bitmap(imagefile);
-                var sourcefile = Path.Combine(imagesource, imageName);
-                var source = new Bitmap(sourcefile);
-
+                var slices = Slice.GenerateBaseSlices(p);
+                var square = SquareService.MakeSquare(slices);
                 var sw = new Stopwatch();
 
                 sw.Start();
 
-                var imagef = square.DeepEstimate(image, estimator);
-                var originalf = square.DeepEstimate(source, new Estimator());
+                var imagef = square.DeepEstimate(train.Image, estimator);
+                var originalf = square.DeepEstimate(train.Original, new Estimator());
 
                 sw.Stop();
 
-                Console.WriteLine($"image: {imageName}\n f: {imagef} target: {originalf} \n time: {sw.Elapsed}\n");
+                Console.WriteLine($"image: {name}\n f: {imagef} target: {originalf} \n time: {sw.Elapsed}\n");
             }
         }
 
         [Test]
         public void TestEstimateSections()
         {
-            var slices = Slice.GenerateBaseSlices(64);
-            foreach (var imagefile in Directory.GetFiles(imageset))
+            foreach (var name in set)
             {
+                var train = ReadImage(name, p);
 
-                var imageName = Path.GetFileName(imagefile);
-                var image = new Bitmap(imagefile);
-                var sourcefile = Path.Combine(imagesource, imageName);
-                var source = new Bitmap(sourcefile);
+                var slices = Slice.GenerateBaseSlices(p);
 
-                var size = param.M;
+                var size = train.Param.M;
                 var squares = new ISquare[size / 2, size / 2];
                 for (int i = 0; i < size / 2; i++)
                 {
@@ -93,16 +85,17 @@ namespace BordererTests
                     }
                 }
 
-                Console.WriteLine($"image: {imageName}");
+                Console.WriteLine($"image: {name}");
                 var f = new double[size, size];
                 var t = new double[size, size];
 
+                var estimator1 = new Estimator();
                 for (int i = 0; i < squares.GetLength(0); i++)
                 {
                     for (int j = 0; j < squares.GetLength(0); j++)
                     {
-                        f[i, j] = squares[i, j].Estimate(image, estimator);
-                        t[i, j] = squares[i, j].Estimate(source, new Estimator());
+                        f[i, j] = estimator.MeasureSquare(train.Image, squares[i, j] as Square);
+                        t[i, j] = estimator1.MeasureSquare(train.Original, squares[i, j] as Square);
                     }
                 }
                 
@@ -132,28 +125,25 @@ namespace BordererTests
         [Test]
         public void TestEstimateSmallSqueres()
         {
-            var estimator = new Estimator();
-            foreach (var imagefile in Directory.GetFiles(imageset))
+            foreach (var name in set)
             {
-                var slices = Slice.GenerateBaseSlices(64);
-                var imageName = Path.GetFileName(imagefile);
-                Console.WriteLine($"image: {imageName}");
+                var train = ReadImage(name, p);
 
-                var sourcefile = Path.Combine(imagesource, imageName);
+                var slices = Slice.GenerateBaseSlices(p);
 
-                var image = new Bitmap(imagefile);
-                var source = new Bitmap(sourcefile);
+                Console.WriteLine($"image: {train.Name}");
 
-                for (int y = 0; y < param.M - 1; y++)
+                var estimator = new Estimator();
+                for (int y = 0; y < train.Param.M - 1; y++)
                 {
-                    for (int x = 0; x < param.M - 1; x++)
+                    for (int x = 0; x < train.Param.M - 1; x++)
                     {
                         var square = new Square(
                             slices[x, y],
                             slices[x + 1, y],
                             slices[x, y + 1],
                             slices[x + 1, y + 1]);
-                        Console.Write($"{estimator.MeasureSquare(source, square):N2}\t");
+                        Console.Write($"{estimator.MeasureSquare(train.Original, square):N2}\t");
                     }
                     Console.WriteLine();
                 }
