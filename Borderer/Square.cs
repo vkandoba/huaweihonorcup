@@ -92,34 +92,11 @@ namespace Borderer
         {
             var slices = new Slice[Size / 64, Size / 64];
             var shift = baseSize / 64;
-            if (First is Slice)
-            {
-                slices[0, 0] = First as Slice;
-                slices[1, 0] = Second as Slice;
-                slices[0, 1] = Thrid as Slice;
-                slices[1, 1] = Four as Slice;
-                return slices;
-            }
 
-            var f = (First as Square).Apply();
-            for (int i = 0; i < f.GetLength(0); i++)
-                for (int j = 0; j < f.GetLength(1); j++)
-                    slices[i, j] = f[i, j];
-
-            var s = (Second as Square).Apply();
-            for (int i = 0; i < s.GetLength(0); i++)
-                for (int j = 0; j < s.GetLength(1); j++)
-                    slices[shift + i, j] = s[i, j];
-
-            var t = (Thrid as Square).Apply();
-            for (int i = 0; i < t.GetLength(0); i++)
-                for (int j = 0; j < t.GetLength(1); j++)
-                   slices[i, shift + j] = t[i, j];
-
-            var f4 = (Four as Square).Apply();
-            for (int i = 0; i < f4.GetLength(0); i++)
-                for (int j = 0; j < f4.GetLength(1); j++)
-                    slices[shift + i, shift + j] =  f4[i, j];
+            slices.CopyPart(First.Apply(), 0, 0);
+            slices.CopyPart(Second.Apply(), shift, 0);
+            slices.CopyPart(Thrid.Apply(), 0, shift);
+            slices.CopyPart(Four.Apply(), shift, shift);
 
             return slices;
         }

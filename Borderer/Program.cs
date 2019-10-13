@@ -20,14 +20,11 @@ namespace Borderer
                 var slices = Slice.GenerateBaseSlices(p);
                 var image = new Bitmap(imagefile);
                 var answer = service.RecursiveCollect(image, param, slices);
-                var map = (answer as Square).Apply();
+                var map = answer.Apply();
+                var permutation = map.GetPermutation().Aggregate("", (s, n) => $"{s} {n}");
                 Console.WriteLine(Path.GetFileName(imagefile));
-                var sp = new List<int>();
-                for (int i = 0; i < param.M; i++)
-                    for (int j = 0; j < param.M; j++)
-                        sp.Add(map[j, i].N);
-                var permutation = sp.Aggregate("", (s, n) => $"{s} {n}");
                 Console.WriteLine(permutation);
+
                 var bitmap = answer.Draw(image);
                 bitmap.Save($"C:\\huaway\\final\\answr-{Path.GetFileName(imagefile)}");
             }

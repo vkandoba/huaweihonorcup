@@ -20,13 +20,13 @@ namespace BordererTests
             service = new SquareService(estimator, 10);
             var slices = Slice.GenerateBaseSlices(64);
             var square = SquareService.MakeSquare(slices);
-            foreach (var imagefile in Directory.GetFiles(imageset).Skip(0).Take(1))
+            foreach (var imagefile in Directory.GetFiles(imageset64).Skip(0).Take(1))
             {
 
                 var imageName = Path.GetFileNameWithoutExtension(imagefile);
                 var image = new Bitmap(imagefile);
                 var adjusted = image.AdjustContrast(2);
-                var sourcefile = Path.Combine(imagesource, imageName + ".png");
+                var sourcefile = Path.Combine(imagesource64, imageName + ".png");
                 var source = new Bitmap(sourcefile);
 
                 var sw = new Stopwatch();
@@ -55,10 +55,10 @@ namespace BordererTests
         [Test]
         public void TestRecursivePrototype()
         {
-            foreach (var imagefile in Directory.GetFiles(imageset).Take(1))
+            foreach (var imagefile in Directory.GetFiles(imageset64).Take(10))
             {
                 var slices = Slice.GenerateBaseSlices(64);
-                service = new SquareService(new Estimator(), 20);
+                service = new SquareService(new Estimator(), 4);
                 var imageName = Path.GetFileName(imagefile);
                 var image = new Bitmap(imagefile);
 
@@ -80,16 +80,13 @@ namespace BordererTests
                         .ToArray();
                     size = squares.Any() ? squares.First().Square.Size : ImageParameters.__totalSize;
                 } while (size < ImageParameters.__totalSize);
+                sw.Stop();
 
                 var answer = squares.Any() ? squares.First().Square : SquareService.MakeSquare(slices);
-                var map = (answer as Square).Apply();
+                var map = answer.Apply();
                 var bitmap = answer.Draw(image);
                 bitmap.Save($"C:\\huaway\\tests\\answr-{imageName}");
-                var sp = new List<int>();
-                for (int i = 0; i < param.M; i++)
-                    for (int j = 0; j < param.M; j++)
-                        sp.Add(map[j, i].N);
-                var permutation = sp.Aggregate("", (s, n) => $"{s} {n}");
+                var permutation = map.GetPermutation().Aggregate("", (s, n) => $"{s} {n}");
                 Console.WriteLine($"image: {imageName}\n time: {sw.Elapsed}\n" +
                                   $"{permutation}");
             }
@@ -101,12 +98,12 @@ namespace BordererTests
             service = new SquareService(estimator, 10);
             var slices = Slice.GenerateBaseSlices(64);
             var square = SquareService.MakeSquare(slices);
-            foreach (var imagefile in Directory.GetFiles(imageset).Take(1))
+            foreach (var imagefile in Directory.GetFiles(imageset64).Take(1))
             {
 
                 var imageName = Path.GetFileName(imagefile);
                 var image = new Bitmap(imagefile);
-                var sourcefile = Path.Combine(imagesource, imageName);
+                var sourcefile = Path.Combine(imagesource64, imageName);
                 var source = new Bitmap(sourcefile);
 
                 var sw = new Stopwatch();
