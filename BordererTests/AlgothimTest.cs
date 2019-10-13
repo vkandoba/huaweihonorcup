@@ -22,6 +22,7 @@ namespace BordererTests
         }
 
         [TestCase(0, 20)]
+        [TestCase(1, 1)]
         public void TestRecursive(int skip, int take)
         {
             foreach (var name in set.Skip(skip).Take(take))
@@ -33,7 +34,7 @@ namespace BordererTests
 
                 var sw = new Stopwatch();
                 sw.Start();
-                var answer = imgbuilder.RecursiveCollect(train.Image, train.Param, slices, 4);
+                var answer = imgbuilder.RecursiveCollect(train.Image, train.Param, slices, 10);
                 sw.Stop();
 
                 var map = answer.Apply(p);

@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using Borderer.Estimator;
 using Borderer.Helpers;
 using Borderer.Squares;
 
@@ -13,12 +13,13 @@ namespace Borderer
         public static void Main(string[] args)
         {
             //var imageset = @"C:\huaway\data_train\64";
-            int p = 64;
-            var imageset = @"C:\huaway\data_test1_blank\64";
+            int p = 32;
+            var imageset = @"C:\huaway\data_test1_blank\32";
             var param = new ImageParameters(p);
-            foreach (var imagefile in Directory.GetFiles(imageset))
+            foreach (var imagefile in Directory.GetFiles(imageset).Take(10))
             {
-                var builder = new ImageBuilder(new SquareBuilder(new Estimator.Estimator()));
+                var estimator = CreateEstimator();
+                var builder = new ImageBuilder(new SquareBuilder(estimator));
                 var slices = Slice.GenerateBaseSlices(p);
                 var image = new Bitmap(imagefile);
                 var answer = builder.RecursiveCollect(image, param, slices, 4);
@@ -30,6 +31,11 @@ namespace Borderer
                 var bitmap = answer.Draw(image);
                 bitmap.Save($"C:\\huaway\\final\\answr-{Path.GetFileName(imagefile)}");
             }
+        }
+
+        private static IEstimator CreateEstimator()
+        {
+            return new RecursiveEstimator(new CacheEstimator(new Estimator.Estimator()));
         }
     }
 }

@@ -20,40 +20,29 @@ namespace Borderer.Squares
 
         public IDictionary<ISquare, SquareAndMeasure> BuildLikelySquares(Bitmap image, ISquare[] parts, int deep)
         {
-            var usedFirst = new HashSet<ISquare>();
-            var usedSecond = new HashSet<ISquare>();
-            var usedThrid = new HashSet<ISquare>();
-            var usedFour = new HashSet<ISquare>();
-
             var result = new Dictionary<ISquare, SquareAndMeasure>();
             var rest = new List<ISquare>(parts);
             foreach (var slice in rest)
             {
-                var squareAndF = BuildLikelySquare(image, slice, parts, deep,
+                var squareAndF = BuildLikelySquare(image, slice,
                         first => parts
-                        .Where(x => !usedSecond.Contains(x) && !first.HasCross(x))
+                        .Where(x => !first.HasCross(x))
                         .OrderBy(x => estimator.MeasureLeftRight(image, first, x))
                         .Take(deep)
                         .ToArray(),
                         (first, second) => parts
-                            .Where(x => !usedThrid.Contains(x) && !first.HasCross(x) && !second.HasCross(x))
+                            .Where(x => !first.HasCross(x) && !second.HasCross(x))
                             .OrderBy(x => estimator.MeasureTopBottom(image, first, x))
                             .Take(deep)
                             .ToArray(),
                         (first, second, thrid) => parts
-                            .Where(x => !usedFour.Contains(x) && !first.HasCross(x) && !second.HasCross(x) && !thrid.HasCross(x))
+                            .Where(x => !first.HasCross(x) && !second.HasCross(x) && !thrid.HasCross(x))
                             .OrderBy(x => (estimator.MeasureLeftRight(image, thrid, x) + estimator.MeasureTopBottom(image, second, x)) / 2.0)
                             .Take(deep)
                             .ToArray()
                     );
                 if (squareAndF != null)
                 {
-                    var square = squareAndF.Square as Square;
-                    usedFirst.Add(square.First);
-                    usedSecond.Add(square.Second);
-                    usedThrid.Add(square.Thrid);
-                    usedFour.Add(square.Four);
-
                     result.Add(slice, squareAndF);
                 }
             }
@@ -61,7 +50,7 @@ namespace Borderer.Squares
             return result;
         }
 
-        public SquareAndMeasure BuildLikelySquare(Bitmap image, ISquare first, ISquare[] slices, int deep,
+        public SquareAndMeasure BuildLikelySquare(Bitmap image, ISquare first,
             Func<ISquare, ISquare[]> selectSeconds,
             Func<ISquare, ISquare, ISquare[]> selectThrids,
             Func<ISquare, ISquare, ISquare, ISquare[]> selectFours)
@@ -69,22 +58,14 @@ namespace Borderer.Squares
             Square best = null;
             double bestF = double.MaxValue;
 
-            var seconds = slices
-                            .Where(x => !first.HasCross(x))
-                            .OrderBy(x => estimator.MeasureLeftRight(image, first, x))
-                            .ToArray();
             var count = 0;
-            foreach (var second in seconds.Take(deep))
+            var seconds = selectSeconds(first);
+            foreach (var second in seconds)
             {
-                var thrids = slices
-                    .Where(x => !first.HasCross(x) && !second.HasCross(x))
-                    .OrderBy(x => estimator.MeasureTopBottom(image, first, x))
-                    .ToArray();
-                foreach (var thrid in thrids.Take(deep))
+                var thrids = selectThrids(first, second);
+                foreach (var thrid in thrids)
                 {
-                    var fours = slices
-                        .Where(x => !first.HasCross(x) && !second.HasCross(x) && !thrid.HasCross(x))
-                        .ToArray();
+                    var fours = selectFours(first, second, thrid);
                     foreach (var four in fours)
                     {
                         count++;
