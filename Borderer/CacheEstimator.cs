@@ -17,25 +17,21 @@ namespace Borderer
             this.estimator = estimator;
         }
 
-        public double MeasureLeftRight(Bitmap image, ISquare left, ISquare right)
+        private double GetOrAdd<TArg>(Bitmap image, IDictionary<TArg, double> cache, TArg arg, Func<Bitmap, TArg, double> calc)
         {
-            if (cacheLeftRight.TryGetValue((left, right), out double f))
+            if (cache.TryGetValue(arg, out double f))
                 return f;
 
-            var measure = estimator.MeasureLeftRight(image, left, right);
-            cacheLeftRight.Add((left, right), measure);
+            var measure = calc(image, arg);
+            cache.Add(arg, measure);
             return measure;
         }
+
+        public double MeasureLeftRight(Bitmap image, ISquare left, ISquare right)
+            => GetOrAdd(image, cacheLeftRight, (left, right), (img, arg) => estimator.MeasureLeftRight(img, arg.Item1, arg.Item2));
 
         public double MeasureTopBottom(Bitmap image, ISquare top, ISquare bottom)
-        {
-            if (cacheTopBottom.TryGetValue((top, bottom), out double f))
-                return f;
-
-            var measure = estimator.MeasureTopBottom(image, top, bottom);
-            cacheTopBottom.Add((top, bottom), measure);
-            return measure;
-        }
+            => GetOrAdd(image, cacheTopBottom, (top, bottom), (img, arg) => estimator.MeasureTopBottom(img, arg.Item1, arg.Item2));
 
         public double MeasureSquare(Bitmap image, Square square)
         {
