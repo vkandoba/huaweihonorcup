@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Borderer
 {
@@ -25,6 +27,24 @@ namespace Borderer
                     sp.Add(slices[j, i].N);
 
             return sp.ToArray();
+        }
+
+        public static string Print<T>(this T[,] array, Func<T, string> printItem)
+        {
+            var lengthX = array.GetLength(0);
+            var lengthY = array.GetLength(1);
+            var acc = new StringBuilder();
+            for (int i = 0; i < lengthY; i++)
+            {
+                for (int j = 0; j < lengthX; j++)
+                {
+                    var str = printItem(array[i, j]);
+                    acc.Append($" {str}");
+                }
+                acc.AppendLine();
+            }
+
+            return acc.ToString();
         }
     }
 }

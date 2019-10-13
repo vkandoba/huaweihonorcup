@@ -16,7 +16,7 @@ namespace Borderer
             var param = new ImageParameters(p);
             foreach (var imagefile in Directory.GetFiles(imageset))
             {
-                var service = new SquareService(new Estimator(), 20);
+                var service = new SquareService(new Estimator(), 4);
                 var slices = Slice.GenerateBaseSlices(p);
                 var image = new Bitmap(imagefile);
                 var answer = service.RecursiveCollect(image, param, slices);

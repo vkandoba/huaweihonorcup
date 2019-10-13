@@ -68,11 +68,11 @@ namespace BordererTests
 
                 var slices = Slice.GenerateBaseSlices(p);
 
-                var size = train.Param.M;
-                var squares = new ISquare[size / 2, size / 2];
-                for (int i = 0; i < size / 2; i++)
+                var size = train.Param.M / 2;
+                var squares = new ISquare[size, size];
+                for (int i = 0; i < size; i++)
                 {
-                    for (int j = 0; j < size / 2; j++)
+                    for (int j = 0; j < size; j++)
                     {
                         int x = 2 * i, y = 2 * j;
                         squares[i, j] = new Square(new[]
@@ -99,25 +99,8 @@ namespace BordererTests
                     }
                 }
                 
-                Console.WriteLine($"f:");
-                for (int i = 0; i < squares.GetLength(0); i++)
-                {
-                    for (int j = 0; j < squares.GetLength(0); j++)
-                    {
-                        Console.Write($"{f[i,j]:N2}\t");
-                    }
-                    Console.WriteLine();
-                }
-
-                Console.WriteLine($"t:");
-                for (int i = 0; i < squares.GetLength(0); i++)
-                {
-                    for (int j = 0; j < squares.GetLength(0); j++)
-                    {
-                        Console.Write($"{t[i,j]:N2}\t");
-                    }
-                    Console.WriteLine();
-                }
+                Console.WriteLine($"f:\n{f.Print(d => $"{d:N2}\t")}");
+                Console.WriteLine($"t:\n{t.Print(d => $"{d:N2}\t")}");
                 Console.WriteLine();
             }
         }
@@ -133,6 +116,7 @@ namespace BordererTests
 
                 Console.WriteLine($"image: {train.Name}");
 
+                var f = new double[train.Param.M - 1, train.Param.M - 1]
                 var estimator = new Estimator();
                 for (int y = 0; y < train.Param.M - 1; y++)
                 {
@@ -143,10 +127,10 @@ namespace BordererTests
                             slices[x + 1, y],
                             slices[x, y + 1],
                             slices[x + 1, y + 1]);
-                        Console.Write($"{estimator.MeasureSquare(train.Original, square):N2}\t");
+                        f[x, y] = estimator.MeasureSquare(train.Original, square);
                     }
-                    Console.WriteLine();
                 }
+                Console.WriteLine(f.Print(d => $"{d:N2}\t"));
                 Console.WriteLine();
             }
         }

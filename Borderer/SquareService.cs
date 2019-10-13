@@ -4,12 +4,6 @@ using System.Linq;
 
 namespace Borderer
 {
-    public class SquareAndF
-    {
-        public ISquare Square { get; set; }
-        public double F { get; set; }
-    }
-
     public class SquareService
     {
         private readonly IEstimator estimator;
@@ -21,9 +15,9 @@ namespace Borderer
             this.n = n;
         }
 
-        public IDictionary<ISquare, SquareAndF> GetSquares(Bitmap image, ISquare[] parts)
+        public IDictionary<ISquare, SquareAndMeasure> GetSquares(Bitmap image, ISquare[] parts)
         {
-            var result = new Dictionary<ISquare, SquareAndF>();
+            var result = new Dictionary<ISquare, SquareAndMeasure>();
             var rest = new Queue<ISquare>(parts);
             while(rest.Any())
             {
@@ -38,7 +32,7 @@ namespace Borderer
 
         public ISquare RecursiveCollect(Bitmap image, ImageParameters param, Slice[,] slices)
         {
-            SquareAndF[] squares = slices.Cast<Slice>().Select(slice => new SquareAndF
+            SquareAndMeasure[] squares = slices.Cast<Slice>().Select(slice => new SquareAndMeasure
             {
                 Square = slice,
                 F = slice.Estimate(image, null)
@@ -57,7 +51,7 @@ namespace Borderer
             return answer;
         }
 
-        public SquareAndF GetSquare(Bitmap image, ISquare first, ISquare[] slices)
+        public SquareAndMeasure GetSquare(Bitmap image, ISquare first, ISquare[] slices)
         {
             Square best = null;
             double bestF = double.MaxValue;
@@ -91,7 +85,7 @@ namespace Borderer
                     }
                 }
             }
-            return best == null ? null : new SquareAndF{Square = best, F = bestF};
+            return best == null ? null : new SquareAndMeasure{Square = best, F = bestF};
         }
 
         public static Square MakeSquare(Slice[,] slices)

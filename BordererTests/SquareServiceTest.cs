@@ -65,7 +65,7 @@ namespace BordererTests
 
                 sw.Start();
 
-                SquareAndF[] squares = slices.Cast<Slice>().Select(slice => new SquareAndF
+                SquareAndMeasure[] squares = slices.Cast<Slice>().Select(slice => new SquareAndMeasure
                 {
                     Square = slice,
                     F = slice.Estimate(image, null)
