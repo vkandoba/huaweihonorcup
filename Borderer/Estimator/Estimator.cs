@@ -6,17 +6,45 @@ namespace Borderer.Estimator
 {
     public class Estimator : IEstimator
     {
+        private Color[] GetLineY(Bitmap image, ISquare square, int x)
+        {
+            var size = square.Size;
+            var colors = new Color[size];
+            lock (image)
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    var coor = square.ToAbsolute(x, i);
+                    colors[i] = image.GetPixel(coor.Item1, coor.Item2);
+                }
+            }
+
+            return colors;
+        }
+
+        private Color[] GetLineX(Bitmap image, ISquare square, int y)
+        {
+            var size = square.Size;
+            var colors = new Color[size];
+            lock (image)
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    var coor = square.ToAbsolute(i, y);
+                    colors[i] = image.GetPixel(coor.Item1, coor.Item2);
+                }
+            }
+
+            return colors;
+        }
+
         public double MeasureLeftRight(Bitmap image, ISquare left, ISquare right)
         {
             var total = 0.0;
+            var leftline = GetLineY(image, left, left.Size - 1);
+            var rightline = GetLineY(image, right, 0);
             for (int i = 0; i < left.Size; i++)
-            {
-                var lxy = left.ToAbsolute(left.Size - 1, i);
-                var leftp = image.GetPixel(lxy.Item1, lxy.Item2);
-                var rxy = right.ToAbsolute(0, i);
-                var rightp = image.GetPixel(rxy.Item1, rxy.Item2);
-                total += VMath.Diff(leftp, rightp);
-            }
+                total += VMath.Diff(leftline[i], rightline[i]);
 
             var measure = total / left.Size;
             return measure;
@@ -25,14 +53,10 @@ namespace Borderer.Estimator
         public double MeasureTopBottom(Bitmap image, ISquare top, ISquare bottom)
         {
             var total = 0.0;
+            var topline = GetLineX(image, top, top.Size - 1);
+            var bottomline = GetLineX(image, bottom, 0);
             for (int i = 0; i < bottom.Size; i++)
-            {
-                var bxy = bottom.ToAbsolute(i, 0);
-                var bottomp = image.GetPixel(bxy.Item1, bxy.Item2);
-                var txy = top.ToAbsolute(i, bottom.Size - 1);
-                var topp = image.GetPixel(txy.Item1, txy.Item2);
-                total += VMath.Diff(bottomp, topp);
-            }
+                total += VMath.Diff(topline[i], bottomline[i]);
 
             var measure = total / top.Size;
             return measure;

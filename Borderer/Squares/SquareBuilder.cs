@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using Borderer.Estimator;
 
 namespace Borderer.Squares
@@ -17,15 +19,15 @@ namespace Borderer.Squares
 
         public IDictionary<ISquare, SquareAndMeasure> BuildLikelySquares(Bitmap image, ISquare[] parts, int deep)
         {
-            var result = new Dictionary<ISquare, SquareAndMeasure>();
-            var rest = new Queue<ISquare>(parts);
-            while(rest.Any())
+            var result = new ConcurrentDictionary<ISquare, SquareAndMeasure>();
+            var rest = new List<ISquare>(parts);
+            var tasks = rest.Select(slice => Task.Run(() =>
             {
-                var slice = rest.Dequeue();
                 var squareAndF = BuildLikelySquare(image, slice, parts, deep);
                 if (squareAndF != null)
-                    result.Add(slice, squareAndF);
-            }
+                    result.AddOrUpdate(slice, (s) => squareAndF, (s, v) => squareAndF);
+            })).ToArray();
+            Task.WaitAll(tasks);
 
             return result;
         }

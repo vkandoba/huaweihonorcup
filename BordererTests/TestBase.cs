@@ -53,6 +53,6 @@ namespace BordererTests
             return Directory.GetFiles(Path.Combine(basedir, $"{p}")).Select(Path.GetFileNameWithoutExtension).ToArray();
         }
 
-        protected static IEstimator CreateEstimator() => new RecursiveEstimator(new CacheEstimator(new Estimator()));
+        protected static IEstimator CreateEstimator() => new CacheEstimator(new RecursiveEstimator(new CacheEstimator(new Estimator())));
     }
 }
