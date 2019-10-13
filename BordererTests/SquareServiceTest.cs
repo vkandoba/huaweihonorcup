@@ -16,8 +16,8 @@ namespace BordererTests
         [Test]
         public void TestGetSquares()
         {
-            var estimator = new Estimator();
-            service = new SquareService(estimator, 10);
+            var estimator = CreateEstimator();
+            service = new SquareService(estimator, 4);
             var slices = Slice.GenerateBaseSlices(64);
             var square = SquareService.MakeSquare(slices);
             foreach (var imagefile in Directory.GetFiles(imageset64).Skip(0).Take(1))
@@ -48,7 +48,6 @@ namespace BordererTests
                 }
                 var bitmap2 = square.Draw(source);
                 bitmap2.Save($"C:\\huaway\\tests\\source-{imageName}.png");
-                Console.WriteLine($"done\n");
             }
         }
 
@@ -58,7 +57,7 @@ namespace BordererTests
             foreach (var imagefile in Directory.GetFiles(imageset64).Take(10))
             {
                 var slices = Slice.GenerateBaseSlices(64);
-                service = new SquareService(new Estimator(), 4);
+                service = new SquareService(CreateEstimator(), 4);
                 var imageName = Path.GetFileName(imagefile);
                 var image = new Bitmap(imagefile);
 

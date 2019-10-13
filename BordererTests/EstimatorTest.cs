@@ -7,7 +7,7 @@ namespace BordererTests
 {
     public class EstimatorTest : TestBase
     {
-        private Estimator estimator;
+        private IEstimator estimator;
 
         private string[] set;
         private int p;
@@ -17,7 +17,7 @@ namespace BordererTests
             base.SetUp();
             set = set32;
             p = 32;
-            estimator = new Estimator();
+            estimator = CreateEstimator();
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace BordererTests
                 sw.Start();
 
                 var imagef = estimator.DeepMeasureSquare(train.Image, square);
-                var originalf = new Estimator().DeepMeasureSquare(train.Original, square);
+                var originalf = CreateEstimator().DeepMeasureSquare(train.Original, square);
 
                 sw.Stop();
 
@@ -89,7 +89,7 @@ namespace BordererTests
                 var f = new double[size, size];
                 var t = new double[size, size];
 
-                var estimator1 = new Estimator();
+                var estimator1 = CreateEstimator();
                 for (int i = 0; i < squares.GetLength(0); i++)
                 {
                     for (int j = 0; j < squares.GetLength(0); j++)

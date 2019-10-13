@@ -45,12 +45,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArrayExtensions.cs" />
+    <Compile Include="CacheEstimator.cs" />
+    <Compile Include="IEstimator.cs" />
     <Compile Include="ImageParameters.cs" />
     <Compile Include="ImageTool.cs" />
     <Compile Include="ISquare.cs" />
     <Compile Include="Estimator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecursiveEstimator.cs" />
     <Compile Include="Slice.cs" />
     <Compile Include="Square.cs" />
     <Compile Include="SquareService.cs" />

@@ -54,6 +54,7 @@
     <Compile Include="ImageIntegrationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestBase.cs" />
+    <Compile Include="TrainImage.cs" />
     <Compile Include="VMathTest.cs" />
   </ItemGroup>
   <ItemGroup>

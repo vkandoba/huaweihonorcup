@@ -7,14 +7,6 @@ using NUnit.Framework;
 
 namespace BordererTests
 {
-    public class TrainImage
-    {
-        public string Name { get; set; }
-        public Bitmap Image { get; set; }
-        public Bitmap Original { get; set; }
-        public ImageParameters Param { get; set; }
-    }
-
     [TestFixture]
     public class TestBase
     {
@@ -59,5 +51,7 @@ namespace BordererTests
         {
             return Directory.GetFiles(Path.Combine(basedir, $"{p}")).Select(Path.GetFileNameWithoutExtension).ToArray();
         }
+
+        protected static IEstimator CreateEstimator() => new RecursiveEstimator(new CacheEstimator(new Estimator()));
     }
 }
