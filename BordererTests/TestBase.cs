@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using Borderer;
+using Borderer.Estimator;
 using NUnit.Framework;
 
 namespace BordererTests

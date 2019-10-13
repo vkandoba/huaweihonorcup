@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Borderer.Estimator;
 
 namespace Borderer
 {

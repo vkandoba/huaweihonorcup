@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Borderer;
+using Borderer.Estimator;
 using NUnit.Framework;
 
 namespace BordererTests

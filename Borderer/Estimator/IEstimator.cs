@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Borderer
+namespace Borderer.Estimator
 {
     public interface IEstimator
     {
