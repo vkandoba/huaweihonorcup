@@ -15,42 +15,47 @@ namespace BordererTests
     public class SquareServiceTest : TestBase
     {
         private SquareService service;
+        private string[] set;
+        private int p;
 
-        [Test]
-        public void TestGetSquares()
+        public override void SetUp()
         {
-            var estimator = CreateEstimator();
-            service = new SquareService(estimator, 4);
-            var slices = Slice.GenerateBaseSlices(64);
-            var square = SquareService.MakeSquare(slices);
-            foreach (var imagefile in Directory.GetFiles(imageset64).Skip(0).Take(1))
-            {
+            base.SetUp();
+            service = new SquareService(CreateEstimator(), 4);
+            set = set64;
+            p = 64;
+        }
 
-                var imageName = Path.GetFileNameWithoutExtension(imagefile);
-                var image = new Bitmap(imagefile);
-                var adjusted = image.AdjustContrast(2);
-                var sourcefile = Path.Combine(imagesource64, imageName + ".png");
-                var source = new Bitmap(sourcefile);
+        [TestCase(0, 10)]
+        public void TestGetSquares(int skip, int take)
+        {
+            foreach (var name in set.Skip(skip).Take(take))
+            {
+                var train = ReadImage(name, p);
+
+                var slices = Slice.GenerateBaseSlices(p);
 
                 var sw = new Stopwatch();
                 sw.Start();
 
                 var array = slices.Cast<Slice>().ToArray();
-                var squares = service.GetSquares(image, array);
+                var squares = service.GetSquares(train.Image, array);
 
                 sw.Stop();
 
-                Console.WriteLine($"image: {imageName}\n time: {sw.Elapsed}\n");
+                Console.WriteLine($"image: {name}\n time: {sw.Elapsed}\n");
 
-                foreach (var pair in squares.OrderBy(x => x.Value.F).Take(param.M * param.M))
+                var f = new double[train.Param.M, train.Param.M];
+                for (int i = 0; i < train.Param.M; i++)
                 {
-                    var N = (pair.Key as Slice).N;
-                    Console.WriteLine($"{N} {pair.Value.F}");
-                    var bitmap = pair.Value.Square.Draw(image);
-                    bitmap.Save($"C:\\huaway\\tests\\drawimage-{imageName}-{N}.png");
+                    for (int j = 0; j < train.Param.M; j++)
+                    {
+                        f[i, j] = squares[slices[i, j]].F;
+                    }
                 }
-                var bitmap2 = square.Draw(source);
-                bitmap2.Save($"C:\\huaway\\tests\\source-{imageName}.png");
+
+                Console.WriteLine($"f:\n{f.Print(d => $"{d:N2}\t")}");
+                Console.WriteLine();
             }
         }
 

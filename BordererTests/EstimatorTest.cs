@@ -24,23 +24,6 @@ namespace BordererTests
         }
 
         [Test]
-        public void TestEstimateSmallSquare()
-        {
-            var train = ReadImage("1200");
-            var allslices = Slice.GenerateBaseSlices(64);
-            var slices = new[]
-            {
-                allslices[0, 0],
-                allslices[1, 0],
-                allslices[0, 1],
-                allslices[1, 1]
-            };
-            var square = new Square(slices);
-            var measure = square.Estimate(train.Image, estimator);
-            Console.WriteLine($"measure: {measure}");
-        }
-
-        [Test]
         public void TestEstimateImages()
         {
             foreach (var name in set)
@@ -93,9 +76,9 @@ namespace BordererTests
                 var t = new double[size, size];
 
                 var estimator1 = CreateEstimator();
-                for (int i = 0; i < squares.GetLength(0); i++)
+                for (int i = 0; i < size; i++)
                 {
-                    for (int j = 0; j < squares.GetLength(0); j++)
+                    for (int j = 0; j < size; j++)
                     {
                         f[i, j] = estimator.MeasureSquare(train.Image, squares[i, j] as Square);
                         t[i, j] = estimator1.MeasureSquare(train.Original, squares[i, j] as Square);
