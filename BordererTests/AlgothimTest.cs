@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using Borderer;
 using Borderer.Helpers;
 using Borderer.Squares;
 using NUnit.Framework;

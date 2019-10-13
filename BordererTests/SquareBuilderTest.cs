@@ -32,7 +32,7 @@ namespace BordererTests
         [TestCase(300, 400)]
         [TestCase(400, 500)]
         [TestCase(500, 600)]
-        public void TestGetSquares(int skip, int take)
+        public void TestLikelySquares(int skip, int take)
         {
             foreach (var name in set.Skip(skip).Take(take))
             {
