@@ -9,6 +9,7 @@ namespace Borderer
         double MeasureLeftRight(Bitmap image, ISquare left, ISquare right);
         double MeasureTopBottom(Bitmap image, ISquare top, ISquare bottom);
         double MeasureSquare(Bitmap image, Square square);
+        double DeepMeasureSquare(Bitmap image, ISquare square);
         double RecursiveMeasureSquare(Bitmap image, Square square);
         double RecursiveMeasureLeftRight(Bitmap image, ISquare left, ISquare right);
         double RecursiveMeasureTopBottom(Bitmap image, ISquare top, ISquare bottom);
@@ -64,6 +65,21 @@ namespace Borderer
                     MeasureTopBottom(image, square.First, square.Thrid) +
                     MeasureLeftRight(image, square.Thrid, square.Four) +
                     MeasureTopBottom(image, square.Second, square.Four))/ 4.0;
+
+        public double DeepMeasureSquare(Bitmap image, ISquare square)
+        {
+            var s = square as Square;
+            if (s == null)
+                return 0;
+
+            var internalEstimate = (DeepMeasureSquare(image, s.First) +
+                                    DeepMeasureSquare(image, s.Second) +
+                                    DeepMeasureSquare(image, s.Thrid) +
+                                    DeepMeasureSquare(image, s.Four)) / 4.0;
+            var ownEstimate = RecursiveMeasureSquare(image, s);
+            return (internalEstimate + ownEstimate) / 2.0;
+
+        }
 
         public double RecursiveMeasureSquare(Bitmap image, Square square) =>
             (RecursiveMeasureLeftRight(image, square.First, square.Second) +

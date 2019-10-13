@@ -10,7 +10,6 @@ namespace Borderer
         Slice[,] Apply();
 
         double Estimate(Bitmap image, IEstimator estimator);
-        double DeepEstimate(Bitmap image, IEstimator estimator);
         bool HasCross(ISquare other);
     }
 }

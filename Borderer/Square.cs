@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Net;
 
 namespace Borderer
 {
@@ -77,16 +76,6 @@ namespace Borderer
              estimator.MeasureTopBottom(image, First, Thrid) +
              estimator.MeasureLeftRight(image, Thrid, Four) +
              estimator.MeasureTopBottom(image, Second, Four)) / 4.0;
-
-        public double DeepEstimate(Bitmap image, IEstimator estimator)
-        {
-            var internalEstimate = (First.DeepEstimate(image, estimator) +
-                                    Second.DeepEstimate(image, estimator) +
-                                    Thrid.DeepEstimate(image, estimator) +
-                                    Four.DeepEstimate(image, estimator)) / 4.0;
-            var ownEstimate = Estimate(image, estimator);
-            return (internalEstimate + ownEstimate) / 2.0;
-        }
 
         public Slice[,] Apply()
         {

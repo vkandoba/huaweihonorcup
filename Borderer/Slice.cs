@@ -32,7 +32,6 @@ namespace Borderer
         public Slice[,] Apply() => new Slice[1,1] {{this}};
 
         public double Estimate(Bitmap image, IEstimator estimator) => 0;
-        public double DeepEstimate(Bitmap image, IEstimator estimator) => 0;
         public bool HasCross(ISquare other)
         {
             var slice = other as Slice;

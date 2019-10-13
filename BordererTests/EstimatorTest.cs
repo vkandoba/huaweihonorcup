@@ -50,8 +50,8 @@ namespace BordererTests
 
                 sw.Start();
 
-                var imagef = square.DeepEstimate(train.Image, estimator);
-                var originalf = square.DeepEstimate(train.Original, new Estimator());
+                var imagef = estimator.DeepMeasureSquare(train.Image, square);
+                var originalf = new Estimator().DeepMeasureSquare(train.Original, square);
 
                 sw.Stop();
 
