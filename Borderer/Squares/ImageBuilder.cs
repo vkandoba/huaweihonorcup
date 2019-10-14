@@ -50,16 +50,23 @@ namespace Borderer.Squares
             var param = new ImageParameters(p);
             var permutation = map.ToPermutation();
             var duplicatesAndGaps = permutation.FindDuplicates();
+            var gaps = duplicatesAndGaps.Gaps;
             if (duplicatesAndGaps.Duplicates.Length == 0)
                 return SquareBuilder.MakeSquare(permutation.ToSlices(p));
 
             var duplicatesPlaces = permutation.GetPlaces(duplicatesAndGaps.Duplicates).Select(x => x.Position).Distinct().ToArray();
             if (duplicatesPlaces.Length > 4)
+            {
+                for (int i = 0; i < gaps.Length; i++)
+                {
+                    permutation[duplicatesPlaces[i]] = gaps[i];
+                }
+
                 return SquareBuilder.MakeSquare(permutation.ToSlices(p));
+            }
 
             var options = VMath.Permutations(duplicatesAndGaps.Gaps.Length, duplicatesPlaces.Length);
 
-            var gaps = duplicatesAndGaps.Gaps;
             Square best = null;
             double bestf = double.MaxValue;
             foreach (var option in options)
