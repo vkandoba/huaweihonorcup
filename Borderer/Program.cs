@@ -15,9 +15,11 @@ namespace Borderer
         {
             //var imageset = @"C:\huaway\data_train\64";
             int p = 64;
-            var imageset = @"C:\huaway\data_test2_blank\64";
+            int r = 1;
+            var imageset = @"C:\huaway\data_test1_blank\" + p;
             var param = new ImageParameters(p);
-            var fout = $"answer{p}.txt";
+            var fout = $"answer{p}{r}.txt";
+            var dout = $"debug{p}{r}.txt";
             File.WriteAllText(fout, "");
             foreach (var imagefile in Directory.GetFiles(imageset))
             {
@@ -30,13 +32,18 @@ namespace Borderer
                 var answer = builder.RecursiveCollect(image, param, slices, 4);
                 var recovered = builder.RecoveDuplicate(image, answer, p);
                 sw.Stop();
+                var f = estimator.DeepMeasureSquare(image, recovered);
                 var map = recovered.Apply(p);
-                Console.WriteLine($"image: {imagefile} time:{sw.Elapsed}");
+                if (map.ToPermutation().FindDuplicates1().Length > 0)
+                    File.AppendAllText(dout, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                File.AppendAllText(dout, $"image: {imagefile} f:{f} time:{sw.Elapsed}\n");
                 var permutation = map.ToPermutation().Aggregate("", (s, n) => $"{s} {n}");
-                File.AppendAllText(fout, $"{Path.GetFileName(imagefile)}\n{permutation}\n");
+                Console.WriteLine(Path.GetFileName(imagefile));
+                Console.WriteLine(permutation);
+                //File.AppendAllText(fout, $"{Path.GetFileName(imagefile)}\n{permutation}\n");
 
                 var bitmap = recovered.Draw(image);
-                bitmap.Save($"C:\\huaway\\final\\answr-{Path.GetFileName(imagefile)}");
+                //bitmap.Save($"C:\\huaway\\final\\answr-{Path.GetFileName(imagefile)}");
             }
         }
 
