@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace Borderer.Helpers
 {
-    public struct PermutationDuplicate
+    public struct NumberAndPosition
     {
         public int N;
         public int Position;
@@ -12,7 +12,7 @@ namespace Borderer.Helpers
 
     public class DuplicateFindResult
     {
-        public PermutationDuplicate[] Duplicates;
+        public int[] Duplicates;
         public int[] Gaps { get; set; }
     }
 
@@ -30,10 +30,29 @@ namespace Borderer.Helpers
             return (ulong) 1 << number;
         }
 
+        public static NumberAndPosition[] GetPlaces(this int[] permutation, int[] numbers)
+        {
+            var result = new List<NumberAndPosition>();
+            for (int i = 0; i < numbers.Length; i++)
+            {
+                for (int j = 0; j < permutation.Length; j++)
+                {
+                    if (permutation[j] == numbers[i])
+                        result.Add(new NumberAndPosition
+                        {
+                            N = numbers[i],
+                            Position = j
+                        });
+                }
+            }
+
+            return result.ToArray();
+        }
+
         public static DuplicateFindResult FindDuplicates(this int[] permutation)
         {
             var map = new int[permutation.Length];
-            var duplicates = new List<PermutationDuplicate>();
+            var duplicates = new List<int>();
             var gaps = new List<int>();
             for (int i = 0; i < permutation.Length; i++)
                 map[i] = 0;
@@ -42,7 +61,7 @@ namespace Borderer.Helpers
                 map[permutation[i]]++;
                 if (map[permutation[i]] > 1)
                 {
-                    duplicates.Add(new PermutationDuplicate{N = permutation[i], Position = i});
+                    duplicates.Add(permutation[i]);
                 }
             }
             for (int i = 0; i < permutation.Length; i++)
@@ -59,6 +78,8 @@ namespace Borderer.Helpers
                 Gaps = gaps.ToArray()
             };
         }
+
+
 
         public static IEnumerable<int[]> Permutations(int k, int n)
         {

@@ -22,27 +22,27 @@ namespace Borderer
             foreach (var imagefile in Directory.GetFiles(imageset))
             {
                 var estimator = CreateEstimator();
-                var builder = new ImageBuilder(new SquareBuilder(estimator));
+                var builder = new ImageBuilder(new SquareBuilder(estimator), estimator);
                 var slices = Slice.GenerateBaseSlices(p);
                 var image = new Bitmap(imagefile);
                 var sw = new Stopwatch();
                 sw.Start();
                 var answer = builder.RecursiveCollect(image, param, slices, 4);
-                var recovered = builder.RecoveDuplicate(answer, p);
+                var recovered = builder.RecoveDuplicate(image, answer, p);
                 sw.Stop();
                 var map = recovered.Apply(p);
                 Console.WriteLine($"image: {imagefile} time:{sw.Elapsed}");
                 var permutation = map.ToPermutation().Aggregate("", (s, n) => $"{s} {n}");
                 File.AppendAllText(fout, $"{Path.GetFileName(imagefile)}\n{permutation}\n");
 
-                var bitmap = answer.Draw(image);
+                var bitmap = recovered.Draw(image);
                 bitmap.Save($"C:\\huaway\\final\\answr-{Path.GetFileName(imagefile)}");
             }
         }
 
         private static IEstimator CreateEstimator()
         {
-            return new RecursiveEstimator(new CacheEstimator(new Estimator.Estimator()));
+            return new CacheEstimator(new RecursiveEstimator(new CacheEstimator(new Estimator.Estimator())));
         }
     }
 }

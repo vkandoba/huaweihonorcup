@@ -17,6 +17,7 @@ namespace BordererTests
             Assert.That(VMath.BitOut(n), Is.EqualTo(bit));
         }
 
+        [TestCase(1, 2)]
         [TestCase(2, 3)]
         [TestCase(3, 5)]
         public void TestGeneratePermutations(int k, int N)

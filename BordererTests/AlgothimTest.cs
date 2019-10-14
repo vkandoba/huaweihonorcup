@@ -21,13 +21,16 @@ namespace BordererTests
             p = 64;
         }
 
+        [TestCase(0, 100)]
         [TestCase(0, 20)]
         [TestCase(1, 1)]
+        [TestCase(8, 1)]
         public void TestRecursive(int skip, int take)
         {
             foreach (var name in set.Skip(skip).Take(take))
             {
-                var imgbuilder = new ImageBuilder(new SquareBuilder(CreateEstimator()));
+                var estimator = CreateEstimator();
+                var imgbuilder = new ImageBuilder(new SquareBuilder(estimator), estimator);
                 var train = ReadImage(name, p);
 
                 var slices = Slice.GenerateBaseSlices(p);
@@ -35,7 +38,7 @@ namespace BordererTests
                 var sw = new Stopwatch();
                 sw.Start();
                 var answer = imgbuilder.RecursiveCollect(train.Image, train.Param, slices, 4);
-                var recovered = imgbuilder.RecoveDuplicate(answer, p);
+                var recovered = imgbuilder.RecoveDuplicate(train.Image, answer, p);
                 sw.Stop();
 
                 var map = recovered.Apply(p);
