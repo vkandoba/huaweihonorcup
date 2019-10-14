@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using Borderer.Estimator;
 
 namespace Borderer.Squares
 {
@@ -18,6 +17,16 @@ namespace Borderer.Squares
             N = PositionX + PositionY * parameters.M;
         }
 
+        public Slice(ImageParameters parameters, int N)
+        {
+            this.parameters = parameters;
+            PositionX = parameters.M % N;
+            PositionY = parameters.M / N; 
+            ShiftX = PositionX * parameters.P;
+            ShiftY = PositionY * parameters.P;
+            this.N = N;
+        }
+
         public int Size => parameters.P;
         public int PositionX { get; }
         public int PositionY { get; }
@@ -32,7 +41,6 @@ namespace Borderer.Squares
 
         public Slice[,] Apply(int p) => new Slice[1,1] {{this}};
 
-        public double Estimate(Bitmap image, IEstimator estimator) => 0;
         public bool HasCross(ISquare other)
         {
             var slice = other as Slice;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using Borderer.Estimator;
 using Borderer.Helpers;
 
 namespace Borderer.Squares
@@ -100,12 +99,6 @@ namespace Borderer.Squares
             }
             return bitmap;
         }
-
-        public double Estimate(Bitmap image, IEstimator estimator) =>
-            (estimator.MeasureLeftRight(image, First, Second) +
-             estimator.MeasureTopBottom(image, First, Thrid) +
-             estimator.MeasureLeftRight(image, Thrid, Four) +
-             estimator.MeasureTopBottom(image, Second, Four)) / 4.0;
 
         public Slice[,] Apply(int p)
         {

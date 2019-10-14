@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using Borderer.Estimator;
 
 namespace Borderer.Squares
 {
@@ -10,7 +9,6 @@ namespace Borderer.Squares
         Bitmap Draw(Bitmap original);
         Slice[,] Apply(int p);
 
-        double Estimate(Bitmap image, IEstimator estimator);
         bool HasCross(ISquare other);
     }
 }
