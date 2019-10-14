@@ -50,6 +50,35 @@ namespace Borderer.Squares
             return result;
         }
 
+        public IDictionary<ISquare, SquareAndMeasure> BuildLikelySquares1(Bitmap image, ISquare[] parts, int deep)
+        {
+            var result = new Dictionary<ISquare, SquareAndMeasure>();
+            var rest = new List<ISquare>(parts);
+            foreach (var slice in rest)
+            {
+                var squareAndF = BuildLikelySquare(image, slice,
+                        first => parts
+                        .OrderBy(x => estimator.MeasureLeftRight(image, first, x))
+                        .Take(deep)
+                        .ToArray(),
+                        (first, second) => parts
+                            .OrderBy(x => estimator.MeasureTopBottom(image, first, x))
+                            .Take(deep)
+                            .ToArray(),
+                        (first, second, thrid) => parts
+                            .OrderBy(x => (estimator.MeasureLeftRight(image, thrid, x) + estimator.MeasureTopBottom(image, second, x)) / 2.0)
+                            .Take(deep)
+                            .ToArray()
+                    );
+                if (squareAndF != null)
+                {
+                    result.Add(slice, squareAndF);
+                }
+            }
+
+            return result;
+        }
+
         public SquareAndMeasure BuildLikelySquare(Bitmap image, ISquare first,
             Func<ISquare, ISquare[]> selectSeconds,
             Func<ISquare, ISquare, ISquare[]> selectThrids,

@@ -16,7 +16,7 @@ namespace Borderer.Helpers
                     array[x + i, y + j] = part[i, j];
         }
 
-        public static int[] GetPermutation(this Slice[,] slices)
+        public static int[] ToPermutation(this Slice[,] slices)
         {
             var lengthX = slices.GetLength(0);
             var lengthY = slices.GetLength(1);
@@ -26,6 +26,24 @@ namespace Borderer.Helpers
                     sp.Add(slices[j, i].N);
 
             return sp.ToArray();
+        }
+
+        public static Slice[,] ToSlices(this int[] permutation, int p)
+        {
+            var size = (int) Math.Sqrt(permutation.Length);
+            var slices = new Slice[size, size];
+            int count = 0;
+            for (int j = 0; j < size; j++)
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    var x = permutation[count] % size;
+                    var y = permutation[count] / size;
+                    slices[i, j] = new Slice(new ImageParameters(p), x, y);
+                    count++;
+                }
+            }
+            return slices;
         }
 
         public static string Print<T>(this T[,] array, Func<T, string> printItem)

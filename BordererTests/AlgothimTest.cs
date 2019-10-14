@@ -37,10 +37,11 @@ namespace BordererTests
                 var answer = imgbuilder.RecursiveCollect(train.Image, train.Param, slices, 4);
                 sw.Stop();
 
-                var map = answer.Apply(p);
-                var bitmap = answer.Draw(train.Image);
+                var answer1 = imgbuilder.RecoveDuplicate(answer, p);
+                var map = answer1.Apply(p);
+                var bitmap = answer1.Draw(train.Image);
                 bitmap.Save($"C:\\huaway\\train\\answr-{name}.png");
-                var permutation = map.GetPermutation().Aggregate("", (s, n) => $"{s} {n}");
+                var permutation = map.ToPermutation().Aggregate("", (s, n) => $"{s} {n}");
                 Console.WriteLine($"image: {name}\n time: {sw.Elapsed}\n" +
                                   $"{permutation}");
             }
@@ -80,7 +81,7 @@ namespace BordererTests
 //                var map = answer.Apply(p);
 //                var bitmap = answer.Draw(train.Image);
 //                bitmap.Save($"C:\\huaway\\train\\answr-{name}.png");
-//                var permutation = map.GetPermutation().Aggregate("", (s, n) => $"{s} {n}");
+//                var permutation = map.ToPermutation().Aggregate("", (s, n) => $"{s} {n}");
 //                Console.WriteLine($"image: {name}\n time: {sw.Elapsed}\n" +
 //                                  $"{permutation}");
 //            }

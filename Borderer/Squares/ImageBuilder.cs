@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Linq;
+using Borderer.Helpers;
 
 namespace Borderer.Squares
 {
@@ -22,8 +23,14 @@ namespace Borderer.Squares
             var size = param.P;
             do
             {
-                squares = builder.BuildLikelySquares(image, squares.Select(x => x.Square).ToArray(), deep)
+                var parts = squares.Select(x => x.Square).ToArray();
+                squares = builder.BuildLikelySquares(image, parts, deep)
                     .Values
+                    .OrderBy(x => x.F)
+                    .ToArray();
+                if (!squares.Any())
+                    squares = builder.BuildLikelySquares1(image, parts, deep)
+                        .Values
                     .OrderBy(x => x.F)
                     .ToArray();
                 size = squares.Any() ? squares.First().Square.Size : ImageParameters.__totalSize;
@@ -31,6 +38,18 @@ namespace Borderer.Squares
 
             var answer = squares.Any() ? squares.First().Square : SquareBuilder.MakeSquare(slices);
             return answer;
+        }
+
+        public ISquare RecoveDuplicate(ISquare square, int p)
+        {
+            var permutation = square.Apply(p).ToPermutation();
+            var duplicatesAndGaps = permutation.FindDuplicates();
+            for (int i = 0; i < duplicatesAndGaps.Gaps.Length; i++)
+            {
+                permutation[duplicatesAndGaps.Duplicates[i].Position] = duplicatesAndGaps.Gaps[i];
+            }
+
+            return SquareBuilder.MakeSquare(permutation.ToSlices(p));
         }
 
     }

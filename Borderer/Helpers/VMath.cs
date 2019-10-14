@@ -4,6 +4,18 @@ using System.Drawing;
 
 namespace Borderer.Helpers
 {
+    public struct PermutationDuplicate
+    {
+        public int N;
+        public int Position;
+    }
+
+    public class DuplicateFindResult
+    {
+        public PermutationDuplicate[] Duplicates;
+        public int[] Gaps { get; set; }
+    }
+
     public static class VMath
     {
         public static ulong BitOut(int number)
@@ -16,6 +28,36 @@ namespace Borderer.Helpers
                 return 1;
 
             return (ulong) 1 << number;
+        }
+
+        public static DuplicateFindResult FindDuplicates(this int[] permutation)
+        {
+            var map = new int[permutation.Length];
+            var duplicates = new List<PermutationDuplicate>();
+            var gaps = new List<int>();
+            for (int i = 0; i < permutation.Length; i++)
+                map[i] = 0;
+            for (int i = 0; i < permutation.Length; i++)
+            {
+                map[permutation[i]]++;
+                if (map[permutation[i]] > 1)
+                {
+                    duplicates.Add(new PermutationDuplicate{N = permutation[i], Position = i});
+                }
+            }
+            for (int i = 0; i < permutation.Length; i++)
+            {
+                if (map[i] == 0)
+                    gaps.Add(i);
+            }
+            if (duplicates.Count != gaps.Count)
+                throw new ApplicationException("Что-то пошло не так с поиском дубликатов");
+
+            return new DuplicateFindResult
+            {
+                Duplicates = duplicates.ToArray(),
+                Gaps = gaps.ToArray()
+            };
         }
 
         public static IEnumerable<int[]> Permutations(int k, int n)
