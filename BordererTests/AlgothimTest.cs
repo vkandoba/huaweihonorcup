@@ -35,11 +35,11 @@ namespace BordererTests
                 var sw = new Stopwatch();
                 sw.Start();
                 var answer = imgbuilder.RecursiveCollect(train.Image, train.Param, slices, 4);
+                var recovered = imgbuilder.RecoveDuplicate(answer, p);
                 sw.Stop();
 
-                var answer1 = imgbuilder.RecoveDuplicate(answer, p);
-                var map = answer1.Apply(p);
-                var bitmap = answer1.Draw(train.Image);
+                var map = recovered.Apply(p);
+                var bitmap = recovered.Draw(train.Image);
                 bitmap.Save($"C:\\huaway\\train\\answr-{name}.png");
                 var permutation = map.ToPermutation().Aggregate("", (s, n) => $"{s} {n}");
                 Console.WriteLine($"image: {name}\n time: {sw.Elapsed}\n" +
