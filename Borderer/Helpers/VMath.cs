@@ -6,6 +6,18 @@ namespace Borderer.Helpers
 {
     public static class VMath
     {
+        public static ulong BitOut(int number)
+        {
+            if (number > 1024)
+                throw new Exception("Number is too large");
+            if (number < 0)
+                throw new Exception("Number is negative");
+            if (number == 0)
+                return 1;
+
+            return (ulong) 1 << number;
+        }
+
         public static IEnumerable<int[]> Permutations(int k, int n)
         {
             var used = new bool[n];

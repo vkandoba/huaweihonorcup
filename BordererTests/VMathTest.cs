@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Borderer;
 using Borderer.Helpers;
 using NUnit.Framework;
 
@@ -8,6 +7,16 @@ namespace BordererTests
 {
     public class VMathTest : TestBase
     {
+        [TestCase(0, (ulong) 1)]
+        [TestCase(1, (ulong) 2)]
+        [TestCase(3, (ulong) 8)]
+        [TestCase(11, (ulong) 2048)]
+        [TestCase(63, 9223372036854775808)]
+        public void TestBitOut(int n, ulong bit)
+        {
+            Assert.That(VMath.BitOut(n), Is.EqualTo(bit));
+        }
+
         [TestCase(2, 3)]
         [TestCase(3, 5)]
         public void TestGeneratePermutations(int k, int N)

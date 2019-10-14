@@ -17,42 +17,36 @@ namespace Borderer.Squares
 
         public ISquare Four { get; }
 
-        public ISquare[] Parts { get; set; }
-
         private readonly int baseSize;
 
-        private SortedSet<int> numbers = null;
+        private ulong numbers = 0;
 
-        private SortedSet<int> Numbers
+        private ulong Numbers
         {
             get
             {
-                if (numbers == null)
+                if (numbers == 0)
                     numbers = MakeNumbersSet();
                 return numbers;
             }
         }
 
-        private SortedSet<int> MakeNumbersSet()
+        private ulong MakeNumbersSet()
         {
-            var set = new SortedSet<int>();
+            ulong set = 0;
             if (First is Slice)
             {
-                set.Add((First as Slice).N);
-                set.Add((Second as Slice).N);
-                set.Add((Thrid as Slice).N);
-                set.Add((Four as Slice).N);
+                set |= VMath.BitOut((First as Slice).N);
+                set |= VMath.BitOut((Second as Slice).N);
+                set |= VMath.BitOut((Thrid as Slice).N);
+                set |= VMath.BitOut((Four as Slice).N);
             }
             else
             {
-                foreach (var n in (First as Square).Numbers)
-                    set.Add(n);
-                foreach (var n in (Second as Square).Numbers)
-                    set.Add(n);
-                foreach (var n in (Thrid as Square).Numbers)
-                    set.Add(n);
-                foreach (var n in (Four as Square).Numbers)
-                    set.Add(n);
+                set |= (First as Square).Numbers;
+                set |= (Second as Square).Numbers;
+                set |= (Thrid as Square).Numbers;
+                set |= (Four as Square).Numbers;
             }
             return set;
         }
@@ -63,7 +57,6 @@ namespace Borderer.Squares
             Second = parts[1];
             Thrid = parts[2];
             Four = parts[3];
-            this.Parts = parts;
             baseSize = First.Size;
             Size = baseSize * 2;
         }
@@ -74,7 +67,6 @@ namespace Borderer.Squares
             this.Second = second;
             this.Thrid = thrid;
             this.Four = four;
-            Parts = new[] {first, second, thrid, four};
             baseSize = first.Size;
             Size = baseSize * 2;
         }
@@ -136,11 +128,7 @@ namespace Borderer.Squares
             if (square == null || square.Size != this.Size)
                 throw new ArgumentException("slice iscross has invalid argument", nameof(other));
 
-            foreach (var n in square.Numbers)
-                if (Numbers.Contains(n))
-                    return true;
-
-            return false;
+            return (Numbers & square.Numbers) != 0;
         }
 
         private string str = null;
@@ -160,7 +148,7 @@ namespace Borderer.Squares
 
         protected bool Equals(Square other)
         {
-            return String == other.String;
+            return Numbers == other.Numbers && String == other.ToString();
         }
 
         public override bool Equals(object obj)
@@ -175,7 +163,7 @@ namespace Borderer.Squares
         {
             unchecked
             {
-               return String.GetHashCode();
+               return (int) Numbers;
             }
         }
     }
