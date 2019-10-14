@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -13,20 +14,26 @@ namespace Borderer
         public static void Main(string[] args)
         {
             //var imageset = @"C:\huaway\data_train\64";
-            int p = 32;
-            var imageset = @"C:\huaway\data_test1_blank\32";
+            int p = 64;
+            var imageset = @"C:\huaway\data_test2_blank\64";
             var param = new ImageParameters(p);
-            foreach (var imagefile in Directory.GetFiles(imageset).Take(10))
+            var fout = $"answer{p}.txt";
+            File.WriteAllText(fout, "");
+            foreach (var imagefile in Directory.GetFiles(imageset))
             {
                 var estimator = CreateEstimator();
                 var builder = new ImageBuilder(new SquareBuilder(estimator));
                 var slices = Slice.GenerateBaseSlices(p);
                 var image = new Bitmap(imagefile);
+                var sw = new Stopwatch();
+                sw.Start();
                 var answer = builder.RecursiveCollect(image, param, slices, 4);
-                var map = answer.Apply(p);
-                var permutation = map.GetPermutation().Aggregate("", (s, n) => $"{s} {n}");
-                Console.WriteLine(Path.GetFileName(imagefile));
-                Console.WriteLine(permutation);
+                var recovered = builder.RecoveDuplicate(answer, p);
+                sw.Stop();
+                var map = recovered.Apply(p);
+                Console.WriteLine($"image: {imagefile} time:{sw.Elapsed}");
+                var permutation = map.ToPermutation().Aggregate("", (s, n) => $"{s} {n}");
+                File.AppendAllText(fout, $"{Path.GetFileName(imagefile)}\n{permutation}\n");
 
                 var bitmap = answer.Draw(image);
                 bitmap.Save($"C:\\huaway\\final\\answr-{Path.GetFileName(imagefile)}");
