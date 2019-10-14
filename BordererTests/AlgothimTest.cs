@@ -24,7 +24,7 @@ namespace BordererTests
         [TestCase(0, 100)]
         [TestCase(0, 20)]
         [TestCase(1, 1)]
-        [TestCase(8, 1)]
+        [TestCase(5, 1)]
         public void TestRecursive(int skip, int take)
         {
             foreach (var name in set.Skip(skip).Take(take))

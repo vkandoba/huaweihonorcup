@@ -18,7 +18,7 @@ namespace Borderer.Squares
 
         private ulong numbers = 0;
 
-        private ulong Numbers
+        public ulong Numbers
         {
             get
             {
@@ -116,8 +116,6 @@ namespace Borderer.Squares
         public bool HasCross(ISquare other)
         {
             var square = other as Square;
-            if (square == null || square.Size != this.Size)
-                throw new ArgumentException("slice iscross has invalid argument", nameof(other));
 
             return (Numbers & square.Numbers) != 0;
         }

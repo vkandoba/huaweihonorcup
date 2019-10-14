@@ -20,8 +20,8 @@ namespace Borderer.Squares
         public Slice(ImageParameters parameters, int N)
         {
             this.parameters = parameters;
-            PositionX = parameters.M % N;
-            PositionY = parameters.M / N; 
+            PositionX =  N % parameters.M;
+            PositionY = N / parameters.M; 
             ShiftX = PositionX * parameters.P;
             ShiftY = PositionY * parameters.P;
             this.N = N;
