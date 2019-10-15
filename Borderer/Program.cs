@@ -18,9 +18,7 @@ namespace Borderer
             int r = 1;
             var imageset = @"C:\huaway\data_test1_blank\" + p;
             var param = new ImageParameters(p);
-            var fout = $"answer{p}{r}.txt";
             var dout = $"debug{p}{r}.txt";
-            File.WriteAllText(fout, "");
             foreach (var imagefile in Directory.GetFiles(imageset))
             {
                 var estimator = CreateEstimator();
@@ -34,8 +32,6 @@ namespace Borderer
                 sw.Stop();
                 var f = estimator.DeepMeasureSquare(image, recovered);
                 var map = recovered.Apply(p);
-                if (map.ToPermutation().FindDuplicates1().Length > 0)
-                    File.AppendAllText(dout, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 File.AppendAllText(dout, $"image: {imagefile} f:{f} time:{sw.Elapsed}\n");
                 var permutation = map.ToPermutation().Aggregate("", (s, n) => $"{s} {n}");
                 Console.WriteLine(Path.GetFileName(imagefile));
