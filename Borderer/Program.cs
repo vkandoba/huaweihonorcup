@@ -4,7 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using Borderer.Estimator;
-using Borderer.Helpers;
+using Borderer.Helpers;Д
 using Borderer.Squares;
 
 namespace Borderer
@@ -13,10 +13,9 @@ namespace Borderer
     {
         public static void Main(string[] args)
         {
-            //var imageset = @"C:\huaway\data_train\64";
             int p = 64;
             int r = 1;
-            var imageset = @"C:\huaway\data_test1_blank\" + p;
+            var imageset = args[0] + p;
             var param = new ImageParameters(p);
             var dout = $"debug{p}{r}.txt";
             foreach (var imagefile in Directory.GetFiles(imageset))
