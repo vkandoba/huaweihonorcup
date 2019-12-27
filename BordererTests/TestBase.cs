@@ -11,14 +11,14 @@ namespace BordererTests
     [TestFixture]
     public class TestBase
     {
-        private static string basedir = @"C:\huaway\data_train\";
+        private static string basedir = @"C:\huawei\data_train\";
         protected static string[] set16 = ToFileNames(16);
         protected static string[] set32 = ToFileNames(32);
         protected static string[] set64 = ToFileNames(64);
 
-        protected static string imageset64 = @"C:\huaway\data_train\64";
-        protected static string imageset32 = @"C:\huaway\data_train\32";
-        protected static string imagesource64 = @"C:\huaway\data_train\64-sources";
+        protected static string imageset64 = @"C:\huawei\data_train\64";
+        protected static string imageset32 = @"C:\huawei\data_train\32";
+        protected static string imagesource64 = @"C:\huawei\data_train\64-sources";
 
         protected ImageParameters param = new ImageParameters(64);
 
